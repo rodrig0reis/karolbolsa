@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { formatPhoneBR } from "@/lib/utils"
 import { MapPin, Phone, Mail } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 
@@ -66,7 +67,7 @@ export async function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <Phone className="h-4 w-4 mt-0.5 text-primary" />
-                <span>{settings?.whatsappNumber ? `WhatsApp: ${settings.whatsappNumber}` : "Não informado"}</span>
+                <span>{settings?.whatsappNumber ? `WhatsApp: ${formatPhoneBR(settings.whatsappNumber)}` : "Não informado"}</span>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="h-4 w-4 mt-0.5 text-primary" />

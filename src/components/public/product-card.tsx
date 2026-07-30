@@ -17,6 +17,7 @@ export interface ProductCardProps {
   isAvailable: boolean
   isActive: boolean
   categoryName: string
+  stock: number
   whatsappUrl?: string
 }
 
@@ -30,10 +31,13 @@ export function ProductCard({
   isAvailable,
   isActive,
   categoryName,
+  stock,
   whatsappUrl
 }: ProductCardProps) {
   // Se estiver inativo, não deve renderizar (fallback de segurança)
   if (!isActive) return null
+
+  const actuallyAvailable = isAvailable && stock > 0
 
   return (
     <Card className="group flex flex-col h-full overflow-hidden border-border/50 bg-background hover:border-primary/30 transition-colors shadow-sm hover:shadow-md relative">
@@ -41,12 +45,12 @@ export function ProductCard({
         <div className="relative aspect-[4/5] overflow-hidden bg-muted">
           {/* Etiquetas e Badges */}
           <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-            {!isAvailable && (
+            {!actuallyAvailable && (
               <Badge className="bg-zinc-800 hover:bg-zinc-900 text-white shadow-sm border-none">
                 Esgotado
               </Badge>
             )}
-            {isPromo && isAvailable && (
+            {isPromo && actuallyAvailable && (
               <Badge className="bg-rose-500 hover:bg-rose-600 text-white shadow-sm border-none">
                 Promoção
               </Badge>
@@ -58,7 +62,7 @@ export function ProductCard({
             alt={name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            className={`object-cover transition-transform duration-500 group-hover:scale-105 ${!isAvailable ? "grayscale opacity-80" : ""}`}
+            className={`object-cover transition-transform duration-500 group-hover:scale-105 ${!actuallyAvailable ? "grayscale opacity-80" : ""}`}
           />
         </div>
         <CardContent className="p-5">
@@ -84,7 +88,7 @@ export function ProductCard({
             Ver detalhes
           </Badge>
         </Link>
-        {isAvailable && whatsappUrl && (
+        {actuallyAvailable && whatsappUrl && (
           <Link href={whatsappUrl} target="_blank" className="w-full" onClick={(e) => e.stopPropagation()}>
             <Badge className="w-full justify-center py-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer rounded-md border-none">
               Comprar pelo WhatsApp

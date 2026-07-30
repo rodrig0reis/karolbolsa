@@ -64,6 +64,7 @@ export default async function PromocoesPage() {
                 isPromo={produto.isPromo}
                 isAvailable={produto.isAvailable}
                 isActive={produto.isActive}
+                stock={produto.stock}
                 categoryName={produto.category.name}
                 whatsappUrl={whatsappUrl}
               />

@@ -6,16 +6,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(value: number | string | null | undefined | unknown): string {
-  if (value === null || value === undefined) return "R$ 0,00"
+  if (value == null) return "R$ 0,00"
   
-  let numValue = 0;
-  if (typeof value === 'string') {
-    numValue = parseFloat(value.replace(',', '.'))
-  } else if (typeof value === 'number') {
-    numValue = value
-  } else {
-    numValue = Number(value)
-  }
+  const numValue = typeof value === 'string' ? parseFloat(value) : Number(value)
   
   if (isNaN(numValue)) return "R$ 0,00"
   
@@ -23,4 +16,16 @@ export function formatCurrency(value: number | string | null | undefined | unkno
     style: "currency",
     currency: "BRL",
   }).format(numValue)
+}
+
+export function formatPhoneBR(phone: string): string {
+  const cleaned = phone.replace(/\D/g, '')
+  if (cleaned.length === 13 && cleaned.startsWith('55')) {
+    // 55 65 99228 1830 -> (65) 99228-1830
+    return `(${cleaned.substring(2, 4)}) ${cleaned.substring(4, 9)}-${cleaned.substring(9)}`
+  }
+  if (cleaned.length === 11) {
+    return `(${cleaned.substring(0, 2)}) ${cleaned.substring(2, 7)}-${cleaned.substring(7)}`
+  }
+  return phone
 }

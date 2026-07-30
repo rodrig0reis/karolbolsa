@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { MapPin, Phone, Mail } from "lucide-react"
+import { formatPhoneBR } from "@/lib/utils"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -74,7 +75,7 @@ export default async function ContatoPage() {
               </div>
               <div>
                 <p className="font-medium">Telefone / WhatsApp</p>
-                <p className="text-muted-foreground">{settings?.whatsappNumber ? `+${settings.whatsappNumber}` : "Não informado"}</p>
+                <p className="text-muted-foreground">{settings?.whatsappNumber ? formatPhoneBR(settings.whatsappNumber) : "Não informado"}</p>
               </div>
             </li>
             <li className="flex items-start gap-4">

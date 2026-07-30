@@ -18,6 +18,9 @@ export default async function Home() {
     include: { category: true },
     take: 4,
   })
+
+  const settings = await prisma.storeSettings.findFirst()
+  const whatsappNumber = settings?.whatsappNumber
   return (
     <div className="flex flex-col gap-16 pb-16">
       
@@ -93,7 +96,9 @@ export default async function Home() {
               isPromo={produto.isPromo}
               isAvailable={produto.isAvailable}
               isActive={produto.isActive}
+              stock={produto.stock}
               categoryName={produto.category.name}
+              whatsappUrl={whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Olá, tenho interesse no produto: ${produto.name}`)}` : undefined}
             />
           ))}
         </div>

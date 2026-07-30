@@ -72,6 +72,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
                 isPromo={produto.isPromo}
                 isAvailable={produto.isAvailable}
                 isActive={produto.isActive}
+                stock={produto.stock}
                 categoryName={category.name}
                 whatsappUrl={whatsappUrl}
               />

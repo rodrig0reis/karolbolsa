@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ProductGallery } from "./gallery"
+import { formatCurrency } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -32,7 +33,7 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
   
   whatsappText = whatsappText
     .replace("[NOME DO PRODUTO]", product.name)
-    .replace("[VALOR]", currentPrice.toString().replace(".", ","))
+    .replace("[VALOR]", formatCurrency(currentPrice))
 
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappText)}`
 
@@ -70,14 +71,14 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
           <div className="mb-8 flex items-baseline gap-4">
             {product.isPromo && product.promoPrice ? (
               <>
-                <span className="text-3xl font-bold text-primary">R$ {product.promoPrice.toString().replace('.', ',')}</span>
-                <span className="text-xl text-muted-foreground line-through">R$ {product.price.toString().replace('.', ',')}</span>
+                <span className="text-3xl font-bold text-primary">{formatCurrency(product.promoPrice)}</span>
+                <span className="text-xl text-muted-foreground line-through">{formatCurrency(product.price)}</span>
                 <Badge className="bg-rose-500 hover:bg-rose-600 border-none text-white ml-2 text-sm shadow-sm">
                   Promoção
                 </Badge>
               </>
             ) : (
-              <span className="text-3xl font-bold text-foreground">R$ {product.price.toString().replace('.', ',')}</span>
+              <span className="text-3xl font-bold text-foreground">{formatCurrency(product.price)}</span>
             )}
           </div>
 
@@ -86,19 +87,19 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
           </div>
 
           <div className="mb-12">
-            {whatsappNumber && product.isAvailable ? (
+            {whatsappNumber && product.isAvailable && product.stock > 0 ? (
               <Link href={whatsappUrl} target="_blank" className="w-full">
                 <Button size="lg" className="w-full text-lg h-14 rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02]">
                   Comprar pelo WhatsApp
                 </Button>
               </Link>
-            ) : !product.isAvailable ? (
+            ) : (!product.isAvailable || product.stock <= 0) ? (
               <Button size="lg" disabled className="w-full text-lg h-14 rounded-full bg-zinc-200 text-zinc-500 cursor-not-allowed">
                 Produto Esgotado
               </Button>
             ) : null}
             <p className="text-center text-xs text-muted-foreground mt-3 flex items-center justify-center gap-1">
-              Atendimento personalizado. Estoque de {product.stock} unidades.
+              Atendimento personalizado. {product.stock > 0 ? `Estoque de ${product.stock} unidades.` : ""}
             </p>
           </div>
 
