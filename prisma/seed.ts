@@ -6,7 +6,15 @@ async function main() {
 
   // 1. Criar usuário admin inicial
   const adminEmail = process.env.ADMIN_EMAIL || "admin@karolbolsas.com.br"
-  const adminPassword = process.env.ADMIN_PASSWORD || "senha_segura_123"
+  let adminPassword = process.env.ADMIN_PASSWORD
+  
+  if (process.env.NODE_ENV === "production") {
+    if (!adminPassword || adminPassword.trim() === "") {
+      throw new Error("ADMIN_PASSWORD é obrigatório em produção. Configure no .env!")
+    }
+  } else {
+    adminPassword = adminPassword || "senha_segura_123"
+  }
   
   const existingAdmin = await prisma.user.findUnique({
     where: { email: adminEmail }
@@ -31,9 +39,9 @@ async function main() {
     await prisma.storeSettings.create({
       data: {
         storeName: "Karol Bolsas",
-        whatsappNumber: "11999999999",
+        whatsappNumber: process.env.WHATSAPP_NUMBER || null,
         whatsappMsg: "Olá, vi este produto no site da Karol Bolsas e tenho interesse: [NOME DO PRODUTO] - Valor: R$ [VALOR]. Pode me passar mais informações?",
-        instagramLink: "https://www.instagram.com/karolbolsas_artesanais/",
+        instagramLink: process.env.INSTAGRAM_URL || "https://www.instagram.com/karolbolsas_artesanais/",
         footerText: "Sua loja especializada em bolsas e acessórios femininos com elegância, qualidade e estilo.",
       }
     })

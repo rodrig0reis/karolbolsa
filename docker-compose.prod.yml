@@ -3,16 +3,19 @@ version: '3.8'
 services:
   db:
     image: postgres:15-alpine
-    container_name: karol_db_prod
-    restart: always
+    container_name: karol_db
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_password}
-      POSTGRES_DB: ${POSTGRES_DB:-karolbolsas_prod}
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - pgdata_prod:/var/lib/postgresql/data
+      - karol_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - karol_network
 
@@ -20,25 +23,45 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: karol_web_prod
-    restart: always
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres_password}@db:5432/${POSTGRES_DB:-karolbolsas_prod}?schema=public
-      - AUTH_SECRET=${AUTH_SECRET}
-      - NEXTAUTH_URL=https://karolbolsas.manialivre.com.br
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./public/uploads:/app/public/uploads
+    container_name: karol_web
+    restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:3000:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL}
+      - AUTH_SECRET=${AUTH_SECRET}
+      - AUTH_URL=${AUTH_URL}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+      - AUTH_TRUST_HOST=${AUTH_TRUST_HOST}
+      - WHATSAPP_NUMBER=${WHATSAPP_NUMBER}
+      - INSTAGRAM_URL=${INSTAGRAM_URL}
+    volumes:
+      - karol_uploads:/app/public/uploads
     networks:
       - karol_network
 
-volumes:
-  pgdata_prod:
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: karol_migrate
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    command: ["npx", "prisma", "migrate", "deploy"]
+    networks:
+      - karol_network
 
 networks:
   karol_network:
     driver: bridge
+
+volumes:
+  karol_postgres_data:
+  karol_uploads:

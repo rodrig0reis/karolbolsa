@@ -17,6 +17,7 @@ export interface ProductCardProps {
   isAvailable: boolean
   isActive: boolean
   categoryName: string
+  whatsappUrl?: string
 }
 
 export function ProductCard({
@@ -28,14 +29,15 @@ export function ProductCard({
   isPromo,
   isAvailable,
   isActive,
-  categoryName
+  categoryName,
+  whatsappUrl
 }: ProductCardProps) {
   // Se estiver inativo, não deve renderizar (fallback de segurança)
   if (!isActive) return null
 
   return (
-    <Card className="group overflow-hidden border-border/50 bg-background hover:border-primary/30 transition-colors shadow-sm hover:shadow-md relative">
-      <Link href={`/produto/${slug}`}>
+    <Card className="group flex flex-col h-full overflow-hidden border-border/50 bg-background hover:border-primary/30 transition-colors shadow-sm hover:shadow-md relative">
+      <Link href={`/produto/${slug}`} className="flex-1 flex flex-col">
         <div className="relative aspect-[4/5] overflow-hidden bg-muted">
           {/* Etiquetas e Badges */}
           <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
@@ -76,6 +78,20 @@ export function ProductCard({
           </div>
         </CardContent>
       </Link>
+      <div className="p-5 pt-0 mt-auto flex flex-col gap-2">
+        <Link href={`/produto/${slug}`} className="w-full">
+          <Badge variant="outline" className="w-full justify-center py-2 hover:bg-muted cursor-pointer rounded-md">
+            Ver detalhes
+          </Badge>
+        </Link>
+        {isAvailable && whatsappUrl && (
+          <Link href={whatsappUrl} target="_blank" className="w-full" onClick={(e) => e.stopPropagation()}>
+            <Badge className="w-full justify-center py-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer rounded-md border-none">
+              Comprar pelo WhatsApp
+            </Badge>
+          </Link>
+        )}
+      </div>
     </Card>
   )
 }
