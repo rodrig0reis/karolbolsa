@@ -14,8 +14,11 @@ $COMPOSE up -d db
 echo "Aguardando banco iniciar..."
 sleep 15
 
-echo "Rodando migrations..."
-$COMPOSE run --rm migrate
+echo "Rodando migrations e seed..."
+$COMPOSE run --rm migrate sh -c "npx prisma migrate deploy && npx prisma db seed"
+
+echo "Aplicando patch de produtos..."
+$COMPOSE run --rm migrate sh -c "npm run patch:products"
 
 echo "Subindo aplicação web..."
 $COMPOSE up -d --build web

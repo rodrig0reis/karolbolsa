@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log("Iniciando patch dos produtos de produção...")
+  console.log("Iniciando patch de produtos...")
 
   // 1. Garantir que as categorias existem e estão ativas
   const categorias = [
@@ -25,21 +25,23 @@ async function main() {
       update: { isActive: true },
       create: { ...cat, isActive: true },
     })
+    console.log(`Categoria criada/atualizada: ${cat.name}`)
   }
-  console.log("Categorias verificadas e atualizadas.")
 
-  // 2. Corrigir produtos existentes (estoque, disponibilidade e imagens base)
-  await prisma.product.updateMany({
+  // 2. Corrigir produtos existentes (estoque, disponibilidade)
+  const resultStock = await prisma.product.updateMany({
     where: { isActive: true, stock: { lte: 0 } },
     data: { stock: 1, isAvailable: true }
   })
+  if (resultStock.count > 0) console.log(`Atualizados estoques de ${resultStock.count} produtos antigos para 1.`)
   
-  await prisma.product.updateMany({
+  const resultAvail = await prisma.product.updateMany({
     where: { isActive: true, isAvailable: false },
     data: { isAvailable: true }
   })
+  if (resultAvail.count > 0) console.log(`Atualizada disponibilidade de ${resultAvail.count} produtos antigos para true.`)
 
-  // 3. Atualizar/Inserir produtos específicos com imagens corretas
+  // 3. Atualizar/Inserir produtos específicos com imagens e categorias corretas
   const catTransversal = await prisma.category.findUnique({ where: { slug: "bolsas-transversais" } })
   const catMochila = await prisma.category.findUnique({ where: { slug: "mochilas" } })
   const catCarteira = await prisma.category.findUnique({ where: { slug: "carteiras" } })
@@ -58,41 +60,6 @@ async function main() {
         promoPrice: 249.90,
         categoryId: catTransversal.id,
         mainImage: "/products/bolsa-elegance-nude.jpg",
-        isPromo: true,
-        isFeatured: true,
-        isAvailable: true,
-        stock: 5,
-      },
-      {
-        name: "Mochila Couro Classic",
-        slug: "mochila-couro-classic",
-        shortDesc: "Mochila de couro marrom espaçosa e moderna.",
-        price: 359.90,
-        categoryId: catMochila.id,
-        mainImage: "/products/mochila-couro-classic.jpg",
-        isFeatured: true,
-        isAvailable: true,
-        stock: 3,
-      },
-      {
-        name: "Carteira Minimalista",
-        slug: "carteira-minimalista",
-        shortDesc: "Carteira compacta para o dia a dia.",
-        price: 89.90,
-        categoryId: catCarteira.id,
-        mainImage: "/products/carteira-minimalista.jpg",
-        isFeatured: true,
-        isAvailable: true,
-        stock: 10,
-      },
-      {
-        name: "Bolsa de Mão Glamour",
-        slug: "bolsa-de-mao-glamour",
-        shortDesc: "Bolsa estruturada perfeita para eventos sociais.",
-        price: 429.90,
-        promoPrice: 399.90,
-        categoryId: catMao.id,
-        mainImage: "/products/bolsa-de-mao-glamour.jpg",
         isPromo: true,
         isFeatured: true,
         isAvailable: true,
@@ -186,15 +153,20 @@ async function main() {
           mainImage: prod.mainImage,
           stock: prod.stock,
           isAvailable: prod.isAvailable,
-          categoryId: prod.categoryId
+          categoryId: prod.categoryId,
+          price: prod.price,
+          promoPrice: prod.promoPrice,
+          isPromo: prod.isPromo,
+          isFeatured: prod.isFeatured,
+          isActive: true
         },
-        create: prod,
+        create: { ...prod, isActive: true },
       })
+      console.log(`Produto criado/atualizado: ${prod.name}`)
     }
-    console.log("Produtos específicos atualizados/inseridos com sucesso.")
   }
 
-  console.log("Patch concluído com sucesso!")
+  console.log("Patch concluído com sucesso.")
 }
 
 main()

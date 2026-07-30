@@ -65,8 +65,8 @@ async function main() {
   for (const cat of categorias) {
     await prisma.category.upsert({
       where: { slug: cat.slug },
-      update: {},
-      create: cat,
+      update: { isActive: true },
+      create: { ...cat, isActive: true },
     })
   }
   console.log("Categorias inseridas.")
@@ -214,8 +214,18 @@ async function main() {
     for (const prod of produtosMock) {
       await prisma.product.upsert({
         where: { slug: prod.slug },
-        update: {},
-        create: prod,
+        update: {
+          mainImage: prod.mainImage,
+          stock: prod.stock,
+          isAvailable: prod.isAvailable,
+          categoryId: prod.categoryId,
+          price: prod.price,
+          promoPrice: prod.promoPrice,
+          isPromo: prod.isPromo,
+          isFeatured: prod.isFeatured,
+          isActive: true
+        },
+        create: { ...prod, isActive: true },
       })
     }
     console.log("Produtos inseridos.")

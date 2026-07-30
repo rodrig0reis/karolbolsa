@@ -25,6 +25,7 @@ export default async function BolsasPage() {
       include: { category: true },
       orderBy: [
         { isAvailable: 'desc' },
+        { isFeatured: 'desc' },
         { createdAt: 'desc' }
       ]
     }),
