@@ -1,54 +1,11 @@
-import { prisma } from "../src/lib/prisma"
-import bcrypt from "bcryptjs"
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
 
 async function main() {
-  console.log("Iniciando seed...")
+  console.log("Iniciando patch dos produtos de produção...")
 
-  // 1. Criar usuário admin inicial
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@karolbolsas.com.br"
-  let adminPassword = process.env.ADMIN_PASSWORD
-  
-  if (process.env.NODE_ENV === "production") {
-    if (!adminPassword || adminPassword.trim() === "") {
-      throw new Error("ADMIN_PASSWORD é obrigatório em produção. Configure no .env!")
-    }
-  } else {
-    adminPassword = adminPassword || "senha_segura_123"
-  }
-  
-  const existingAdmin = await prisma.user.findUnique({
-    where: { email: adminEmail }
-  })
-
-  if (!existingAdmin) {
-    const passwordHash = await bcrypt.hash(adminPassword, 10)
-    await prisma.user.create({
-      data: {
-        name: process.env.ADMIN_NAME || "Karol Admin",
-        email: adminEmail,
-        passwordHash,
-        role: "admin",
-      }
-    })
-    console.log("Admin criado:", adminEmail)
-  }
-
-  // 2. Configurações da loja
-  const settingsCount = await prisma.storeSettings.count()
-  if (settingsCount === 0) {
-    await prisma.storeSettings.create({
-      data: {
-        storeName: "Karol Bolsas",
-        whatsappNumber: process.env.WHATSAPP_NUMBER || null,
-        whatsappMsg: "Olá, vi este produto no site da Karol Bolsas e tenho interesse: [NOME DO PRODUTO] - Valor: R$ [VALOR]. Pode me passar mais informações?",
-        instagramLink: process.env.INSTAGRAM_URL || "https://www.instagram.com/karolbolsas_artesanais/",
-        footerText: "Sua loja especializada em bolsas e acessórios femininos com elegância, qualidade e estilo.",
-      }
-    })
-    console.log("Configurações da loja inseridas.")
-  }
-
-  // 3. Categorias Base
+  // 1. Garantir que as categorias existem e estão ativas
   const categorias = [
     { name: "Bolsas", slug: "bolsas" },
     { name: "Bolsas de Praia", slug: "bolsas-de-praia" },
@@ -65,13 +22,24 @@ async function main() {
   for (const cat of categorias) {
     await prisma.category.upsert({
       where: { slug: cat.slug },
-      update: {},
-      create: cat,
+      update: { isActive: true },
+      create: { ...cat, isActive: true },
     })
   }
-  console.log("Categorias inseridas.")
+  console.log("Categorias verificadas e atualizadas.")
 
-  // 4. Produtos Iniciais
+  // 2. Corrigir produtos existentes (estoque, disponibilidade e imagens base)
+  await prisma.product.updateMany({
+    where: { isActive: true, stock: { lte: 0 } },
+    data: { stock: 1, isAvailable: true }
+  })
+  
+  await prisma.product.updateMany({
+    where: { isActive: true, isAvailable: false },
+    data: { isAvailable: true }
+  })
+
+  // 3. Atualizar/Inserir produtos específicos com imagens corretas
   const catTransversal = await prisma.category.findUnique({ where: { slug: "bolsas-transversais" } })
   const catMochila = await prisma.category.findUnique({ where: { slug: "mochilas" } })
   const catCarteira = await prisma.category.findUnique({ where: { slug: "carteiras" } })
@@ -214,14 +182,19 @@ async function main() {
     for (const prod of produtosMock) {
       await prisma.product.upsert({
         where: { slug: prod.slug },
-        update: {},
+        update: {
+          mainImage: prod.mainImage,
+          stock: prod.stock,
+          isAvailable: prod.isAvailable,
+          categoryId: prod.categoryId
+        },
         create: prod,
       })
     }
-    console.log("Produtos inseridos.")
+    console.log("Produtos específicos atualizados/inseridos com sucesso.")
   }
 
-  console.log("Seed concluído com sucesso!")
+  console.log("Patch concluído com sucesso!")
 }
 
 main()

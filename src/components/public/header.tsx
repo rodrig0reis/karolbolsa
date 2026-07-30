@@ -26,7 +26,7 @@ import { prisma } from '@/lib/prisma'
 const navLinks = [
   { name: 'Início', href: '/' },
   { name: 'Produtos', href: '/produtos' },
-  { name: 'Bolsas', href: '/categoria/bolsas' },
+  { name: 'Bolsas', href: '/bolsas' },
   { name: 'Acessórios', href: '/categoria/acessorios' },
   { name: 'Promoções', href: '/promocoes' },
   { name: 'Sobre', href: '/sobre' },
