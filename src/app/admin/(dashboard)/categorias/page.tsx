@@ -3,13 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus } from "lucide-react"
+import { Plus, Pencil } from "lucide-react"
 import Link from "next/link"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 import { DeleteCategoryButton } from "./delete-button"
+import { ToggleCategoryButton } from "./toggle-button"
 
 export default async function CategoriasPage() {
   const categorias = await prisma.category.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { order: "asc" },
     include: {
       _count: {
         select: { products: true }
@@ -43,33 +46,52 @@ export default async function CategoriasPage() {
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Slug</TableHead>
+                <TableHead>Ordem</TableHead>
+                <TableHead>Produtos</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Qtd. Produtos</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
+                <TableHead>Data</TableHead>
+                <TableHead className="w-[100px] text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {categorias.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                     Nenhuma categoria encontrada.
                   </TableCell>
                 </TableRow>
               ) : (
-                categorias.map((cat) => (
-                  <TableRow key={cat.id}>
-                    <TableCell className="font-medium">{cat.name}</TableCell>
-                    <TableCell>{cat.slug}</TableCell>
+                categorias.map((categoria) => (
+                  <TableRow key={categoria.id}>
+                    <TableCell className="font-medium">{categoria.name}</TableCell>
+                    <TableCell>{categoria.slug}</TableCell>
+                    <TableCell>{categoria.order}</TableCell>
                     <TableCell>
-                      {cat.isActive ? (
-                        <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-200">Ativa</Badge>
+                      <Badge variant="secondary">{categoria._count.products}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      {categoria.isActive ? (
+                        <Badge variant="outline" className="bg-emerald-100 text-emerald-800 border-emerald-300">Ativa</Badge>
                       ) : (
                         <Badge variant="outline" className="bg-muted text-muted-foreground">Inativa</Badge>
                       )}
                     </TableCell>
-                    <TableCell>{cat._count.products}</TableCell>
-                    <TableCell className="text-right">
-                      <DeleteCategoryButton id={cat.id} productCount={cat._count.products} />
+                    <TableCell>
+                      {format(new Date(categoria.createdAt), "dd 'de' MMMM, yyyy", { locale: ptBR })}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-2">
+                        <ToggleCategoryButton id={categoria.id} currentStatus={categoria.isActive} />
+                        <Link href={`/admin/categorias/${categoria.id}/editar`}>
+                          <Button variant="ghost" size="icon" title="Editar">
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Editar</span>
+                          </Button>
+                        </Link>
+                        {categoria._count.products === 0 && (
+                          <DeleteCategoryButton id={categoria.id} />
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

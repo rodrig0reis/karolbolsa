@@ -1,12 +1,11 @@
 import { prisma } from "@/lib/prisma"
-import NovoProdutoPage from "./form"
+import { ProductForm } from "@/components/admin/product-form"
 
-export default async function Page() {
+export default async function NovoProdutoPage() {
   const categorias = await prisma.category.findMany({
     where: { isActive: true },
-    select: { id: true, name: true },
     orderBy: { name: 'asc' }
   })
 
-  return <NovoProdutoPage categorias={categorias} />
+  return <ProductForm categorias={categorias} />
 }

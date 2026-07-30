@@ -5,7 +5,7 @@ import { Trash2 } from "lucide-react"
 import { deleteCategory } from "@/actions/categories"
 import { useTransition } from "react"
 
-export function DeleteCategoryButton({ id, productCount }: { id: string, productCount: number }) {
+export function DeleteCategoryButton({ id, productCount = 0 }: { id: string, productCount?: number }) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = () => {

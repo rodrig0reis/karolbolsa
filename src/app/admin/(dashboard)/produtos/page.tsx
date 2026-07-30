@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus } from "lucide-react"
+import { Plus, Pencil } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { DeleteProductButton } from "./delete-button"
+import { ToggleStatusButton } from "./toggle-button"
+import { formatCurrency } from "@/lib/utils"
 
 export default async function ProdutosPage() {
   const produtos = await prisma.product.findMany({
@@ -46,13 +47,14 @@ export default async function ProdutosPage() {
                 <TableHead>Preço (R$)</TableHead>
                 <TableHead>Estoque</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Destaques</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {produtos.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                     Nenhum produto encontrado.
                   </TableCell>
                 </TableRow>
@@ -72,19 +74,16 @@ export default async function ProdutosPage() {
                     </TableCell>
                     <TableCell className="font-medium">
                       {produto.name}
-                      {produto.isFeatured && (
-                        <Badge variant="secondary" className="ml-2 text-[10px]">Destaque</Badge>
-                      )}
                     </TableCell>
                     <TableCell>{produto.category.name}</TableCell>
                     <TableCell>
                       {produto.promoPrice ? (
                         <div className="flex flex-col">
-                          <span className="font-medium text-emerald-600">{produto.promoPrice.toString()}</span>
-                          <span className="text-xs text-muted-foreground line-through">{produto.price.toString()}</span>
+                          <span className="font-medium text-emerald-600">{formatCurrency(produto.promoPrice)}</span>
+                          <span className="text-xs text-muted-foreground line-through">{formatCurrency(produto.price)}</span>
                         </div>
                       ) : (
-                        <span className="font-medium">{produto.price.toString()}</span>
+                        <span className="font-medium">{formatCurrency(produto.price)}</span>
                       )}
                     </TableCell>
                     <TableCell>{produto.stock}</TableCell>
@@ -95,8 +94,23 @@ export default async function ProdutosPage() {
                         <Badge variant="outline" className="bg-muted text-muted-foreground">Inativo</Badge>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
-                      <DeleteProductButton id={produto.id} />
+                    <TableCell>
+                      <div className="flex gap-2">
+                        {produto.isFeatured && <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-300">Destaque</Badge>}
+                        {produto.promoPrice && <Badge variant="outline" className="bg-rose-100 text-rose-800 border-rose-300">Promo</Badge>}
+                        {!produto.isFeatured && !produto.promoPrice && <span className="text-muted-foreground text-xs">-</span>}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center justify-end gap-2">
+                        <ToggleStatusButton id={produto.id} type="active" currentStatus={produto.isActive} />
+                        <Link href={`/admin/produtos/${produto.id}/editar`}>
+                          <Button variant="ghost" size="icon" title="Editar">
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Editar</span>
+                          </Button>
+                        </Link>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

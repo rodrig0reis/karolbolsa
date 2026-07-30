@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Trash2 } from "lucide-react"
-import { deleteProduct } from "@/actions/products"
+import { deleteProductPermanent as deleteProduct } from "@/actions/products"
 import { useTransition } from "react"
 
 export function DeleteProductButton({ id }: { id: string }) {
