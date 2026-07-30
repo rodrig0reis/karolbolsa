@@ -29,3 +29,14 @@ export function formatPhoneBR(phone: string): string {
   }
   return phone
 }
+
+export function buildGeneralWhatsAppUrl(phone: string): string {
+  const text = "Olá, vim pelo site da Karol Bolsas e gostaria de atendimento."
+  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
+}
+
+export function buildProductWhatsAppUrl(phone: string, productName: string, price: unknown): string {
+  const formattedPrice = formatCurrency(price)
+  const text = `Olá, vi este produto no site da Karol Bolsas e tenho interesse: ${productName} - Valor: ${formattedPrice}. Pode me passar mais informações?`
+  return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`
+}

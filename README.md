@@ -140,3 +140,13 @@ npm run build
 - Não use senhas com caracteres especiais sem formatar (URL encode) na `DATABASE_URL`.
 - Não exponha o banco PostgreSQL publicamente (porta 5432). O `docker-compose.prod.yml` usa network interna.
 - Mantenha a aplicação Web mapeada somente no localhost (`127.0.0.1:3000`). O acesso externo deve ser intermediado estritamente via proxy reverso (Nginx).
+
+## Testando o Preview do WhatsApp
+
+O site está configurado com as tags Open Graph para gerar um preview bonito quando o link é compartilhado no WhatsApp, Telegram, Twitter e outros.
+Para verificar se o WhatsApp já atualizou a imagem de capa (logo):
+1. Copie a URL `https://karolbolsas.manialivre.com.br/`
+2. Cole em uma conversa no WhatsApp e aguarde alguns segundos antes de enviar.
+3. A imagem `og-karol-bolsas.jpg` deverá aparecer.
+
+Se não atualizar de imediato, pode ser cache dos servidores do Facebook/WhatsApp. Tente enviar a URL com um parâmetro aleatório, como `https://karolbolsas.manialivre.com.br/?v=1` para forçar o WhatsApp a ler novamente as tags `<meta property="og:image" ...>`.

@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ProductCard } from "@/components/public/product-card"
 import { prisma } from "@/lib/prisma"
+import { buildProductWhatsAppUrl } from "@/lib/utils"
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -98,7 +99,7 @@ export default async function Home() {
               isActive={produto.isActive}
               stock={produto.stock}
               categoryName={produto.category.name}
-              whatsappUrl={whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Olá, tenho interesse no produto: ${produto.name}`)}` : undefined}
+              whatsappUrl={whatsappNumber ? buildProductWhatsAppUrl(whatsappNumber, produto.name, produto.isPromo && produto.promoPrice ? produto.promoPrice : produto.price) : undefined}
             />
           ))}
         </div>

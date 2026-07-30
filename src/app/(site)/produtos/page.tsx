@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { Prisma } from "@prisma/client"
 import { ProductCard } from "@/components/public/product-card"
 import { ProductsFilter } from "./products-filter"
+import { buildProductWhatsAppUrl } from "@/lib/utils"
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -74,7 +75,6 @@ export default async function TodosProdutosPage({
   ])
 
   const whatsappNumber = settings?.whatsappNumber
-  const baseWhatsappMsg = settings?.whatsappMsg || "Olá, gostaria de saber mais sobre [NOME DO PRODUTO] no valor de R$ [VALOR]."
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12">
@@ -97,10 +97,7 @@ export default async function TodosProdutosPage({
             let whatsappUrl = undefined
             if (whatsappNumber && produto.isAvailable) {
               const currentPrice = produto.isPromo && produto.promoPrice ? produto.promoPrice : produto.price
-              const msg = baseWhatsappMsg
-                .replace("[NOME DO PRODUTO]", produto.name)
-                .replace("[VALOR]", currentPrice.toString().replace(".", ","))
-              whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`
+              whatsappUrl = buildProductWhatsAppUrl(whatsappNumber, produto.name, currentPrice)
             }
 
             return (

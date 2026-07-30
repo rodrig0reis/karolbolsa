@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { MapPin, Phone, Mail } from "lucide-react"
-import { formatPhoneBR } from "@/lib/utils"
+import { formatPhoneBR, buildGeneralWhatsAppUrl } from "@/lib/utils"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -49,7 +49,7 @@ export default async function ContatoPage() {
 
           <div className="flex flex-col gap-4 pt-4">
             {settings?.whatsappNumber && (
-              <Link href={`https://wa.me/${settings.whatsappNumber}`} target="_blank">
+              <Link href={buildGeneralWhatsAppUrl(settings.whatsappNumber)} target="_blank">
                 <Button size="lg" className="w-full sm:w-auto text-base rounded-full shadow-md bg-emerald-600 hover:bg-emerald-700">
                   <Phone className="mr-2 h-5 w-5" />
                   Falar no WhatsApp

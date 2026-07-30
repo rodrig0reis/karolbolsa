@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ProductGallery } from "./gallery"
-import { formatCurrency } from "@/lib/utils"
+import { formatCurrency, buildProductWhatsAppUrl } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -29,13 +29,9 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
   // Montar link do WhatsApp dinâmico
   const whatsappNumber = settings?.whatsappNumber || "5511999999999" // Fallback
   const currentPrice = product.isPromo && product.promoPrice ? product.promoPrice : product.price
-  let whatsappText = settings?.whatsappMsg || "Olá, gostaria de saber mais sobre [NOME DO PRODUTO] no valor de R$ [VALOR]."
-  
-  whatsappText = whatsappText
-    .replace("[NOME DO PRODUTO]", product.name)
-    .replace("[VALOR]", formatCurrency(currentPrice))
-
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappText)}`
+  const whatsappUrl = whatsappNumber 
+    ? buildProductWhatsAppUrl(whatsappNumber, product.name, currentPrice)
+    : ""
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
