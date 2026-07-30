@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { auth } from "../../../auth"
+import { auth } from "../../auth"
 
 // Utilitário para gerar slug
 function generateSlug(text: string) {

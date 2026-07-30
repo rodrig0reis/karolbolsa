@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { auth } from "../../../auth"
+import { auth } from "../../auth"
 
 export async function updateSettings(prevState: any, formData: FormData) {
   const session = await auth()
