@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { MapPin, Phone, Mail } from "lucide-react"
+import { prisma } from "@/lib/prisma"
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg
@@ -20,21 +21,26 @@ const InstagramIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
-export function Footer() {
+export async function Footer() {
+  const settings = await prisma.storeSettings.findFirst()
+  const storeName = settings?.storeName || "Karol Bolsas"
+  
   return (
     <footer className="bg-secondary/30 border-t mt-12">
       <div className="container mx-auto px-4 md:px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <h3 className="font-serif text-xl font-bold text-primary">Karol Bolsas</h3>
+            <h3 className="font-serif text-xl font-bold text-primary">{storeName}</h3>
             <p className="text-sm text-muted-foreground">
-              Sua loja especializada em bolsas e acessórios femininos com elegância, qualidade e estilo.
+              {settings?.footerText || "Sua loja especializada em bolsas e acessórios femininos com elegância, qualidade e estilo."}
             </p>
             <div className="flex items-center space-x-4">
-              <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" className="text-muted-foreground hover:text-primary">
-                <InstagramIcon className="h-5 w-5" />
-                <span className="sr-only">Instagram</span>
-              </Link>
+              {settings?.instagramLink && (
+                <Link href={settings.instagramLink} target="_blank" className="text-muted-foreground hover:text-primary">
+                  <InstagramIcon className="h-5 w-5" />
+                  <span className="sr-only">Instagram</span>
+                </Link>
+              )}
             </div>
           </div>
           
@@ -63,22 +69,22 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li className="flex items-start gap-3">
                 <Phone className="h-4 w-4 mt-0.5 text-primary" />
-                <span>(11) 99999-9999</span>
+                <span>{settings?.whatsappNumber ? `WhatsApp: ${settings.whatsappNumber}` : "Não informado"}</span>
               </li>
               <li className="flex items-start gap-3">
                 <Mail className="h-4 w-4 mt-0.5 text-primary" />
-                <span>contato@karolbolsas.com.br</span>
+                <span>{settings?.email || "contato@karolbolsas.com.br"}</span>
               </li>
               <li className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 mt-0.5 text-primary" />
-                <span>Atendimento de Seg a Sex,<br/>das 09h às 18h</span>
+                <span>{settings?.workingHours || "Atendimento de Seg a Sex,\ndas 09h às 18h"}</span>
               </li>
             </ul>
           </div>
         </div>
         
         <div className="border-t mt-12 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Karol Bolsas. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} {storeName}. Todos os direitos reservados.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <Link href="/termos" className="hover:text-primary">Termos de Uso</Link>
             <Link href="/privacidade" className="hover:text-primary">Política de Privacidade</Link>

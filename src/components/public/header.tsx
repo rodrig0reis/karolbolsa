@@ -22,6 +22,7 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet'
 import { Badge } from '@/components/ui/badge'
+import { prisma } from '@/lib/prisma'
 
 const navLinks = [
   { name: 'Início', href: '/' },
@@ -32,7 +33,10 @@ const navLinks = [
   { name: 'Contato', href: '/contato' },
 ]
 
-export function Header() {
+export async function Header() {
+  const settings = await prisma.storeSettings.findFirst()
+  const storeName = settings?.storeName || "Karol Bolsas"
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
@@ -47,7 +51,7 @@ export function Header() {
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
               <SheetHeader>
                 <SheetTitle className="text-left font-serif text-2xl font-bold tracking-tight text-primary">
-                  Karol Bolsas
+                  {storeName}
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-4 mt-8">
@@ -69,7 +73,7 @@ export function Header() {
         <div className="flex items-center justify-center flex-1 md:justify-start">
           <Link href="/" className="flex items-center gap-2">
             <span className="font-serif text-2xl font-bold tracking-tight text-primary">
-              Karol Bolsas
+              {storeName}
             </span>
           </Link>
         </div>
@@ -89,10 +93,14 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2 flex-1 justify-end">
-          <Button variant="ghost" size="icon" className="hidden sm:inline-flex text-muted-foreground hover:text-primary">
-            <InstagramIcon className="h-5 w-5" />
-            <span className="sr-only">Instagram</span>
-          </Button>
+          {settings?.instagramLink && (
+            <Link href={settings.instagramLink} target="_blank">
+              <Button variant="ghost" size="icon" className="hidden sm:inline-flex text-muted-foreground hover:text-primary">
+                <InstagramIcon className="h-5 w-5" />
+                <span className="sr-only">Instagram</span>
+              </Button>
+            </Link>
+          )}
           
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
             <Search className="h-5 w-5" />
