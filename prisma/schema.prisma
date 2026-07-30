@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  order       Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id            String         @id @default(uuid())
+  name          String
+  slug          String         @unique
+  sku           String?
+  brand         String?
+  shortDesc     String
+  fullDesc      String?
+  price         Decimal        @db.Decimal(10, 2)
+  promoPrice    Decimal?       @db.Decimal(10, 2)
+  categoryId    String
+  category      Category       @relation(fields: [categoryId], references: [id])
+  colors        String[]       
+  material      String?
+  dimensions    String?
+  weight        String?
+  height        String?
+  width         String?
+  depth         String?
+  stock         Int            @default(0)
+  isAvailable   Boolean        @default(true)
+  isActive      Boolean        @default(true)
+  isFeatured    Boolean        @default(false)
+  isPromo       Boolean        @default(false)
+  mainImage     String         
+  images        ProductImage[]
+  order         Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  altText   String?
+  order     Int      @default(0)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Banner {
+  id          String   @id @default(uuid())
+  title       String
+  subtitle    String?
+  imageUrl    String
+  buttonLink  String?
+  buttonText  String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model StoreSettings {
+  id             String   @id @default(uuid())
+  storeName      String   @default("Karol Bolsas")
+  whatsappNumber String?
+  whatsappMsg    String?  @default("Olá, vi este produto no site da Karol Bolsas e tenho interesse: [NOME DO PRODUTO] - Valor: R$ [VALOR]. Pode me passar mais informações?")
+  instagramLink  String?  @default("https://www.instagram.com/karolbolsas_artesanais/")
+  footerText     String?
+  workingHours   String?
+  email          String?
+  updatedAt      DateTime @updatedAt
+}

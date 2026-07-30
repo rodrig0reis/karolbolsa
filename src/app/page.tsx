@@ -3,51 +3,21 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { prisma } from "@/lib/prisma"
 
-const categoriasMock = [
-  { nome: "Bolsas Transversais", slug: "bolsas-transversais" },
-  { nome: "Bolsas de Mão", slug: "bolsas-de-mao" },
-  { nome: "Mochilas", slug: "mochilas" },
-  { nome: "Carteiras", slug: "carteiras" },
-  { nome: "Acessórios", slug: "acessorios" },
-]
+export const dynamic = "force-dynamic"
 
-const produtosMock = [
-  {
-    id: "1",
-    nome: "Bolsa Elegance Nude",
-    preco: "299,90",
-    promo: "249,90",
-    imagem: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop",
-    categoria: "Bolsas Transversais"
-  },
-  {
-    id: "2",
-    nome: "Mochila Couro Classic",
-    preco: "359,90",
-    promo: null,
-    imagem: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=600&auto=format&fit=crop",
-    categoria: "Mochilas"
-  },
-  {
-    id: "3",
-    nome: "Carteira Minimalista",
-    preco: "89,90",
-    promo: null,
-    imagem: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=600&auto=format&fit=crop",
-    categoria: "Carteiras"
-  },
-  {
-    id: "4",
-    nome: "Bolsa de Mão Glamour",
-    preco: "429,90",
-    promo: "399,90",
-    imagem: "https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=600&auto=format&fit=crop",
-    categoria: "Bolsas de Mão"
-  },
-]
+export default async function Home() {
+  const categorias = await prisma.category.findMany({
+    where: { isActive: true },
+    orderBy: { order: "asc" },
+  })
 
-export default function Home() {
+  const produtos = await prisma.product.findMany({
+    where: { isActive: true, isFeatured: true },
+    include: { category: true },
+    take: 4,
+  })
   return (
     <div className="flex flex-col gap-16 pb-16">
       
@@ -87,10 +57,10 @@ export default function Home() {
       <section className="container mx-auto px-4">
         <h2 className="font-serif text-3xl font-bold text-center mb-10">Compre por Categoria</h2>
         <div className="flex flex-wrap justify-center gap-4">
-          {categoriasMock.map((cat) => (
+          {categorias.map((cat) => (
             <Link key={cat.slug} href={`/categoria/${cat.slug}`}>
               <Button variant="secondary" className="rounded-full px-6 py-6 shadow-sm hover:shadow-md transition-all text-sm font-medium">
-                {cat.nome}
+                {cat.name}
               </Button>
             </Link>
           ))}
@@ -107,36 +77,36 @@ export default function Home() {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {produtosMock.map((produto) => (
+          {produtos.map((produto) => (
             <Card key={produto.id} className="group overflow-hidden border-border/50 bg-background hover:border-primary/30 transition-colors shadow-sm hover:shadow-md">
-              <Link href={`/produto/${produto.id}`}>
+              <Link href={`/produto/${produto.slug}`}>
                 <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-                  {produto.promo && (
+                  {produto.isPromo && (
                     <Badge className="absolute top-3 left-3 z-10 bg-rose-500 hover:bg-rose-600 text-white shadow-sm border-none">
                       Promoção
                     </Badge>
                   )}
                   <Image
-                    src={produto.imagem}
-                    alt={produto.nome}
+                    src={produto.mainImage}
+                    alt={produto.name}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
                 <CardContent className="p-5">
-                  <div className="text-xs text-muted-foreground mb-2">{produto.categoria}</div>
+                  <div className="text-xs text-muted-foreground mb-2">{produto.category.name}</div>
                   <h3 className="font-medium text-lg leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    {produto.nome}
+                    {produto.name}
                   </h3>
                   <div className="flex items-baseline gap-2 mt-3">
-                    {produto.promo ? (
+                    {produto.promoPrice && produto.isPromo ? (
                       <>
-                        <span className="text-lg font-bold text-primary">R$ {produto.promo}</span>
-                        <span className="text-sm text-muted-foreground line-through">R$ {produto.preco}</span>
+                        <span className="text-lg font-bold text-primary">R$ {produto.promoPrice.toString().replace('.', ',')}</span>
+                        <span className="text-sm text-muted-foreground line-through">R$ {produto.price.toString().replace('.', ',')}</span>
                       </>
                     ) : (
-                      <span className="text-lg font-bold text-foreground">R$ {produto.preco}</span>
+                      <span className="text-lg font-bold text-foreground">R$ {produto.price.toString().replace('.', ',')}</span>
                     )}
                   </div>
                 </CardContent>
