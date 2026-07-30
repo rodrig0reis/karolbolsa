@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: karol_db_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_password}
+      POSTGRES_DB: ${POSTGRES_DB:-karolbolsas_prod}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    networks:
+      - karol_network
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: karol_web_prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres_password}@db:5432/${POSTGRES_DB:-karolbolsas_prod}?schema=public
+      - AUTH_SECRET=${AUTH_SECRET}
+      - NEXTAUTH_URL=https://karolbolsas.manialivre.com.br
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./public/uploads:/app/public/uploads
+    depends_on:
+      - db
+    networks:
+      - karol_network
+
+volumes:
+  pgdata_prod:
+
+networks:
+  karol_network:
+    driver: bridge
