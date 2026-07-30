@@ -3,6 +3,9 @@ import { Prisma } from "@prisma/client"
 import { ProductCard } from "@/components/public/product-card"
 import { ProductsFilter } from "./products-filter"
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function TodosProdutosPage({
   searchParams
 }: {

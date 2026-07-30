@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { MapPin, Phone, Mail } from "lucide-react"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"

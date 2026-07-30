@@ -60,27 +60,83 @@ rm -rf .next
 npm run build
 ```
 
-## Preparação para Deploy VPS
+## Deploy limpo em nova VPS Ubuntu
 
-Siga o checklist antes de colocar o site no ar (deploy real):
-
-1. Acesse o servidor VPS e clone o repositório.
-2. Copie o `.env.production.example` para `.env.production` e preencha as chaves:
-   - Defina senhas fortes para `POSTGRES_PASSWORD` e `ADMIN_PASSWORD`.
-   - Gere uma string segura (32 caracteres) para `AUTH_SECRET`.
-   - Configure a URL final em `NEXT_PUBLIC_SITE_URL` e `NEXTAUTH_URL`.
-   - Defina o `WHATSAPP_NUMBER` no formato internacional sem símbolos (ex: `5511999999999`).
-3. Dê permissão de execução aos scripts:
+1. Instale as dependências básicas:
    ```bash
-   chmod +x deploy.sh scripts/*.sh
+   sudo apt update
+   sudo apt install -y ca-certificates curl gnupg git nginx certbot python3-certbot-nginx
    ```
-4. Execute o deploy automatizado (Docker irá buildar a versão Standalone e aplicar o seed):
+   *Instale também o Docker Engine e o Docker Compose Plugin.*
+
+2. Clone o repositório:
    ```bash
+   sudo mkdir -p /opt/karolbolsa
+   sudo chown -R $USER:$USER /opt/karolbolsa
+   cd /opt/karolbolsa
+   git clone URL_DO_REPOSITORIO .
+   ```
+
+3. Crie e preencha o arquivo `.env.production`:
+   ```env
+   DATABASE_URL=postgresql://karol_user:SENHA_FORTE@db:5432/karolbolsa?schema=public
+   POSTGRES_USER=karol_user
+   POSTGRES_PASSWORD=SENHA_FORTE
+   POSTGRES_DB=karolbolsa
+   
+   AUTH_SECRET=GERAR_COM_OPENSSL
+   AUTH_URL=https://karolbolsas.manialivre.com.br
+   NEXTAUTH_URL=https://karolbolsas.manialivre.com.br
+   AUTH_TRUST_HOST=true
+   
+   ADMIN_NAME=Admin
+   ADMIN_EMAIL=email_admin
+   ADMIN_PASSWORD=senha_admin_forte
+   
+   WHATSAPP_NUMBER=55DDDNUMERO
+   INSTAGRAM_URL=https://www.instagram.com/karolbolsas_artesanais/
+   NEXT_PUBLIC_SITE_URL=https://karolbolsas.manialivre.com.br
+   UPLOAD_MAX_SIZE_MB=5
+   NODE_ENV=production
+   ```
+   > **Nota:** Para o `AUTH_SECRET`, rode `openssl rand -base64 32`. Se a senha do banco (`POSTGRES_PASSWORD`) contiver `@`, codifique na `DATABASE_URL` ou use senhas alfanuméricas.
+
+4. Dê permissão e execute o deploy:
+   ```bash
+   cp .env.production .env
+   chmod +x deploy.sh
+   chmod +x scripts/backup.sh
+   chmod +x scripts/restore-db.sh
+   chmod +x scripts/restore-uploads.sh
    ./deploy.sh
    ```
-5. Configure o Nginx proxy (copie `deploy/nginx/karolbolsas.conf` para `/etc/nginx/sites-available/` e crie o link simbólico).
-6. Rode o certbot:
+
+5. Valide o funcionamento:
+   ```bash
+   docker compose --env-file .env.production -f docker-compose.prod.yml ps
+   docker compose --env-file .env.production -f docker-compose.prod.yml logs --tail=100 web
+   docker compose --env-file .env.production -f docker-compose.prod.yml logs --tail=80 db
+   ```
+
+6. Configure o Nginx proxy:
+   ```bash
+   sudo rm -f /etc/nginx/sites-enabled/default
+   sudo cp deploy/nginx/karolbolsas.conf /etc/nginx/sites-available/karolbolsas.conf
+   sudo ln -sf /etc/nginx/sites-available/karolbolsas.conf /etc/nginx/sites-enabled/karolbolsas.conf
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+   *Teste HTTP:* `curl -I http://karolbolsas.manialivre.com.br`
+
+7. Emitir HTTPS (Certbot):
    ```bash
    sudo certbot --nginx -d karolbolsas.manialivre.com.br
+   sudo certbot renew --dry-run
    ```
-7. Configure o Cron para backup automático apontando para `scripts/backup.sh`.
+
+## Segurança (Checklist Obrigatório)
+- Nunca commite o arquivo `.env.production`.
+- Troque `POSTGRES_PASSWORD`, `ADMIN_PASSWORD` e `AUTH_SECRET` se forem vazados.
+- Não use senhas com caracteres especiais sem formatar (URL encode) na `DATABASE_URL`.
+- Não exponha o banco PostgreSQL publicamente (porta 5432). O `docker-compose.prod.yml` usa network interna.
+- Mantenha a aplicação Web mapeada somente no localhost (`127.0.0.1:3000`). O acesso externo deve ser intermediado estritamente via proxy reverso (Nginx).

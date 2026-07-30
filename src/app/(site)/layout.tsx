@@ -2,6 +2,9 @@ import { Header } from "@/components/public/header";
 import { Footer } from "@/components/public/footer";
 import { WhatsappButton } from "@/components/public/whatsapp-button";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function SiteLayout({
   children,
 }: {

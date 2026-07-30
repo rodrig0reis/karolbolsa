@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma"
 import { ProductCard } from "@/components/public/product-card"
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "Promoções | Karol Bolsas",
   description: "Bolsas e acessórios com condições especiais na Karol Bolsas."

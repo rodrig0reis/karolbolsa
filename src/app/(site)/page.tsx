@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button"
 import { ProductCard } from "@/components/public/product-card"
 import { prisma } from "@/lib/prisma"
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   const categorias = await prisma.category.findMany({

@@ -3,6 +3,9 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { ProductCard } from "@/components/public/product-card"
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
   

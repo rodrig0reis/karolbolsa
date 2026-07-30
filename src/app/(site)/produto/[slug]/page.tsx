@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function ProdutoPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
   const product = await prisma.product.findUnique({

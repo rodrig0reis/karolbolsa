@@ -1,4 +1,3 @@
-Ôùç injected env (5) from .env // tip: Ôîÿ override existing { override: true }
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";
 
