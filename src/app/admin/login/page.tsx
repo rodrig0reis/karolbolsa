@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 
-export default function LoginPage() {
+function LoginForm() {
   const searchParams = useSearchParams()
   const from = searchParams.get("from") || "/admin"
   
@@ -59,5 +60,13 @@ export default function LoginPage() {
         </form>
       </Card>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen w-screen items-center justify-center bg-muted/30">Carregando...</div>}>
+      <LoginForm />
+    </Suspense>
   )
 }

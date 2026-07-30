@@ -1,8 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { ProductCard } from "@/components/public/product-card"
 import { prisma } from "@/lib/prisma"
 
 export const dynamic = "force-dynamic"
@@ -43,12 +42,16 @@ export default async function Home() {
             Descubra a nova coleção de bolsas e acessórios que combinam perfeitamente com a sua essência.
           </p>
           <div className="flex gap-4 justify-center">
-            <Button size="lg" className="rounded-full px-8 text-base h-12 shadow-md">
-              Ver Coleção
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 text-base h-12 bg-background/50 backdrop-blur-sm border-primary/20 hover:bg-background/80">
-              Promoções
-            </Button>
+            <Link href="/produtos">
+              <Button size="lg" className="rounded-full px-8 text-base h-12 shadow-md">
+                Ver Coleção
+              </Button>
+            </Link>
+            <Link href="/promocoes">
+              <Button size="lg" variant="outline" className="rounded-full px-8 text-base h-12 bg-background/50 backdrop-blur-sm border-primary/20 hover:bg-background/80">
+                Promoções
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -78,40 +81,19 @@ export default async function Home() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {produtos.map((produto) => (
-            <Card key={produto.id} className="group overflow-hidden border-border/50 bg-background hover:border-primary/30 transition-colors shadow-sm hover:shadow-md">
-              <Link href={`/produto/${produto.slug}`}>
-                <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-                  {produto.isPromo && (
-                    <Badge className="absolute top-3 left-3 z-10 bg-rose-500 hover:bg-rose-600 text-white shadow-sm border-none">
-                      Promoção
-                    </Badge>
-                  )}
-                  <Image
-                    src={produto.mainImage}
-                    alt={produto.name}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <CardContent className="p-5">
-                  <div className="text-xs text-muted-foreground mb-2">{produto.category.name}</div>
-                  <h3 className="font-medium text-lg leading-tight mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    {produto.name}
-                  </h3>
-                  <div className="flex items-baseline gap-2 mt-3">
-                    {produto.promoPrice && produto.isPromo ? (
-                      <>
-                        <span className="text-lg font-bold text-primary">R$ {produto.promoPrice.toString().replace('.', ',')}</span>
-                        <span className="text-sm text-muted-foreground line-through">R$ {produto.price.toString().replace('.', ',')}</span>
-                      </>
-                    ) : (
-                      <span className="text-lg font-bold text-foreground">R$ {produto.price.toString().replace('.', ',')}</span>
-                    )}
-                  </div>
-                </CardContent>
-              </Link>
-            </Card>
+            <ProductCard 
+              key={produto.id}
+              id={produto.id}
+              name={produto.name}
+              slug={produto.slug}
+              price={produto.price}
+              promoPrice={produto.promoPrice}
+              mainImage={produto.mainImage}
+              isPromo={produto.isPromo}
+              isAvailable={produto.isAvailable}
+              isActive={produto.isActive}
+              categoryName={produto.category.name}
+            />
           ))}
         </div>
       </section>
@@ -124,9 +106,11 @@ export default async function Home() {
             <p className="text-muted-foreground text-lg leading-relaxed">
               Na Karol Bolsas, acreditamos que uma bolsa é mais do que um acessório, é uma extensão da sua personalidade. Trabalhamos com materiais de alta qualidade para entregar peças únicas que acompanham você em todos os momentos.
             </p>
-            <Button variant="outline" className="rounded-full border-primary/30 text-primary hover:bg-primary/5">
-              Conheça nossa história
-            </Button>
+            <Link href="/sobre">
+              <Button variant="outline" className="rounded-full border-primary/30 text-primary hover:bg-primary/5">
+                Conheça nossa história
+              </Button>
+            </Link>
           </div>
           <div className="md:w-1/2 relative h-[300px] md:h-[400px] w-full rounded-2xl overflow-hidden">
             <Image 

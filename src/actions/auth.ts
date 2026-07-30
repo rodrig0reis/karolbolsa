@@ -4,7 +4,7 @@ import { signIn, signOut } from "../../auth"
 import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 
-export async function signInAction(prevState: any, formData: FormData) {
+export async function signInAction(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
   const redirectTo = formData.get("redirectTo") as string || "/admin"

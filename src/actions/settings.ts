@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { auth } from "../../auth"
 
-export async function updateSettings(prevState: any, formData: FormData) {
+export async function updateSettings(prevState: unknown, formData: FormData) {
   const session = await auth()
   if (!session) return { error: "Não autorizado" }
 

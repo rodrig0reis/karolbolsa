@@ -20,7 +20,7 @@ function generateSlug(text: string) {
 
 const storage = new LocalStorageProvider()
 
-export async function createProduct(prevState: any, formData: FormData) {
+export async function createProduct(prevState: unknown, formData: FormData) {
   const session = await auth()
   if (!session) return { error: "Não autorizado" }
 

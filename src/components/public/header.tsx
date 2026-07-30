@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ShoppingBag, Search, Menu } from 'lucide-react'
+import { Search, Menu } from 'lucide-react'
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg
@@ -21,7 +21,6 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 )
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet'
-import { Badge } from '@/components/ui/badge'
 import { prisma } from '@/lib/prisma'
 
 const navLinks = [
@@ -30,6 +29,7 @@ const navLinks = [
   { name: 'Bolsas', href: '/categoria/bolsas' },
   { name: 'Acessórios', href: '/categoria/acessorios' },
   { name: 'Promoções', href: '/promocoes' },
+  { name: 'Sobre', href: '/sobre' },
   { name: 'Contato', href: '/contato' },
 ]
 
@@ -105,14 +105,6 @@ export async function Header() {
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
             <Search className="h-5 w-5" />
             <span className="sr-only">Buscar</span>
-          </Button>
-
-          <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-primary">
-            <ShoppingBag className="h-5 w-5" />
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 rounded-full bg-primary text-primary-foreground text-xs">
-              0
-            </Badge>
-            <span className="sr-only">Carrinho</span>
           </Button>
         </div>
       </div>

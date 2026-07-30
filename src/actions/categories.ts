@@ -17,7 +17,7 @@ function generateSlug(text: string) {
     .replace(/--+/g, "-")
 }
 
-export async function createCategory(prevState: any, formData: FormData) {
+export async function createCategory(prevState: unknown, formData: FormData) {
   const session = await auth()
   if (!session) return { error: "Não autorizado" }
 
@@ -65,6 +65,7 @@ export async function deleteCategory(id: string) {
     revalidatePath("/admin/categorias")
     return { success: true }
   } catch (error) {
+    console.error(error)
     return { error: "Erro ao deletar categoria." }
   }
 }

@@ -58,9 +58,6 @@ export async function Footer() {
             <h4 className="font-medium">Atendimento</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/contato" className="hover:text-primary transition-colors">Fale Conosco</Link></li>
-              <li><Link href="/trocas" className="hover:text-primary transition-colors">Trocas e Devoluções</Link></li>
-              <li><Link href="/prazos" className="hover:text-primary transition-colors">Prazos e Entregas</Link></li>
-              <li><Link href="/faq" className="hover:text-primary transition-colors">Dúvidas Frequentes</Link></li>
             </ul>
           </div>
 
