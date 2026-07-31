@@ -9,8 +9,12 @@ import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { DeleteCategoryButton } from "./delete-button"
 import { ToggleCategoryButton } from "./toggle-button"
+import { getAdminSession } from "@/lib/admin-session"
 
 export default async function CategoriasPage() {
+  const session = await getAdminSession()
+  const isAdmin = session?.role === "ADMIN"
+
   const categorias = await prisma.category.findMany({
     orderBy: [
       { sortOrder: "asc" },
@@ -121,7 +125,7 @@ export default async function CategoriasPage() {
                             <span className="sr-only">Editar</span>
                           </Button>
                         </Link>
-                        {categoria._count.products === 0 && (
+                        {isAdmin && categoria._count.products === 0 && (
                           <DeleteCategoryButton id={categoria.id} />
                         )}
                       </div>

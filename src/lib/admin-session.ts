@@ -6,7 +6,7 @@ const COOKIE_NAME = "karol_admin_session"
 type AdminSessionPayload = {
   userId: string
   email: string
-  role: "ADMIN"
+  role: "ADMIN" | "COLABORADOR"
   exp: number
 }
 
@@ -62,7 +62,7 @@ export async function createAdminSession(user: {
   const payload: AdminSessionPayload = {
     userId: user.id,
     email: user.email,
-    role: "ADMIN",
+    role: (user.role.toUpperCase() === "ADMIN" ? "ADMIN" : "COLABORADOR"),
     exp: Date.now() + 1000 * 60 * 60 * 24 * 30,
   }
 

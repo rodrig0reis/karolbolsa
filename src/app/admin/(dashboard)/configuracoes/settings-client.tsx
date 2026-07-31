@@ -12,8 +12,17 @@ import { SettingsSection } from "@/components/admin/settings-section"
 import { Save, Loader2, Store, Phone, Share2, Paintbrush, Globe, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { PasswordChangeModal } from "./password-modal"
+import { UsersManagement } from "./users-management"
 
-export function SettingsClient({ initialSettings }: { initialSettings: any }) {
+export function SettingsClient({ 
+  initialSettings, 
+  currentUserId, 
+  role 
+}: { 
+  initialSettings: any
+  currentUserId: string
+  role: string
+}) {
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState<{type: "success" | "error", text: string} | null>(null)
   const router = useRouter()
@@ -243,6 +252,12 @@ export function SettingsClient({ initialSettings }: { initialSettings: any }) {
                 </div>
              </div>
           </SettingsSection>
+
+          {role === "ADMIN" && (
+            <SettingsSection title="Gestão de Acessos" description="Adicione ou remova membros da equipe.">
+              <UsersManagement currentUserId={currentUserId} />
+            </SettingsSection>
+          )}
         </TabsContent>
       </Tabs>
 

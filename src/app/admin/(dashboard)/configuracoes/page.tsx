@@ -1,5 +1,6 @@
 import { getStoreSettingsUncached } from "@/lib/settings"
 import { SettingsClient } from "./settings-client"
+import { getAdminSession } from "@/lib/admin-session"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -7,6 +8,7 @@ export const revalidate = 0
 
 export default async function SettingsPage() {
   const settings = await getStoreSettingsUncached()
+  const session = await getAdminSession()
   
   if (!settings) {
     return <div>Erro ao carregar configurações. O banco de dados pode não estar inicializado.</div>
@@ -21,7 +23,11 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <SettingsClient initialSettings={settings} />
+      <SettingsClient 
+        initialSettings={settings} 
+        currentUserId={session?.userId || ""}
+        role={session?.role || "COLABORADOR"}
+      />
     </div>
   )
 }

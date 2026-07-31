@@ -269,7 +269,7 @@ export async function toggleProductActive(id: string) {
 
 export async function deleteProductPermanent(id: string) {
   const session = await auth()
-  if (!session) return { error: "Não autorizado" }
+  if (!session || (session as any).user?.role !== "ADMIN") return { error: "Não autorizado" }
 
   try {
     const product = await prisma.product.findUnique({

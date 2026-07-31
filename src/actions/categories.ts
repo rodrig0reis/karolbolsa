@@ -165,7 +165,7 @@ export async function toggleCategoryActive(id: string) {
 
 export async function deleteCategory(id: string) {
   const session = await getAdminSession()
-  if (!session) return { error: "Não autorizado" }
+  if (!session || session.role !== "ADMIN") return { error: "Não autorizado" }
 
   try {
     const count = await prisma.product.count({ where: { categoryId: id } })

@@ -19,7 +19,11 @@ export async function POST(request: Request) {
     where: { email }
   })
 
-  if (!user || !user.isActive || String(user.role).toUpperCase() !== "ADMIN") {
+  if (!user || !user.isActive) {
+    redirect("/admin/login?error=1")
+  }
+  const roleUpper = String(user.role).toUpperCase()
+  if (roleUpper !== "ADMIN" && roleUpper !== "COLABORADOR") {
     redirect("/admin/login?error=1")
   }
 
