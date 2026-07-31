@@ -64,6 +64,16 @@ export async function Header() {
                     {link.name}
                   </Link>
                 ))}
+                <div className="h-px w-full bg-border my-2" />
+                <Link
+                  href="https://www.instagram.com/karolbolsas_artesanais/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-lg font-medium text-foreground/70 transition-colors hover:text-primary"
+                >
+                  <InstagramIcon className="h-5 w-5" />
+                  Instagram Oficial
+                </Link>
               </nav>
             </SheetContent>
           </Sheet>
@@ -93,14 +103,11 @@ export async function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2 flex-1 justify-end">
-          {settings?.instagramLink && (
-            <Link href={settings.instagramLink} target="_blank">
-              <Button variant="ghost" size="icon" className="hidden sm:inline-flex text-muted-foreground hover:text-primary">
-                <InstagramIcon className="h-5 w-5" />
-                <span className="sr-only">Instagram</span>
-              </Button>
-            </Link>
-          )}
+          <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" rel="noopener noreferrer" title="Instagram Oficial">
+            <Button variant="ghost" size="icon" className="hidden sm:inline-flex text-muted-foreground hover:text-primary" aria-label="Acessar Instagram">
+              <InstagramIcon className="h-5 w-5" />
+            </Button>
+          </Link>
           
           <form action="/produtos" className="relative flex items-center">
             <input 

@@ -47,23 +47,29 @@ export default async function ContatoPage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 pt-4">
-            {settings?.whatsappNumber && (
-              <Link href={buildGeneralWhatsAppUrl(settings.whatsappNumber)} target="_blank">
-                <Button size="lg" className="w-full sm:w-auto text-base rounded-full shadow-md bg-emerald-600 hover:bg-emerald-700">
-                  <Phone className="mr-2 h-5 w-5" />
-                  Falar no WhatsApp
+            <div className="flex flex-col gap-4 pt-4">
+              {settings?.whatsappNumber && (
+                <Link href={buildGeneralWhatsAppUrl(settings.whatsappNumber)} target="_blank" rel="noopener noreferrer">
+                  <Button size="lg" className="w-full sm:w-auto text-base rounded-full shadow-md bg-emerald-600 hover:bg-emerald-700 h-14 font-medium">
+                    <Phone className="mr-2 h-5 w-5" />
+                    Falar no WhatsApp
+                  </Button>
+                </Link>
+              )}
+            </div>
+
+            <div className="mt-8 p-6 bg-secondary/20 border border-primary/10 rounded-2xl flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
+              <div className="text-center sm:text-left space-y-1">
+                <h3 className="font-serif font-semibold text-xl text-primary">Acompanhe novidades no Instagram</h3>
+                <p className="text-muted-foreground font-medium">@karolbolsas_artesanais</p>
+              </div>
+              <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto mt-2 sm:mt-0">
+                <Button variant="outline" className="w-full rounded-full border-primary/30 text-primary hover:bg-primary/5 font-medium h-12">
+                  <InstagramIcon className="mr-2 h-4 w-4" />
+                  Abrir Instagram
                 </Button>
               </Link>
-            )}
-
-            <Link href={instagramUrl} target="_blank">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto text-base rounded-full hover:text-primary border-primary/20">
-                <InstagramIcon className="mr-2 h-5 w-5" />
-                Seguir no Instagram
-              </Button>
-            </Link>
-          </div>
+            </div>
         </div>
 
         <div className="bg-secondary/30 p-8 rounded-2xl flex flex-col justify-center space-y-6">

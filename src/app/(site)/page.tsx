@@ -162,11 +162,18 @@ export default async function Home() {
             <p className="text-muted-foreground text-lg leading-relaxed">
               Na Karol Bolsas, acreditamos que uma bolsa é mais do que um acessório, é uma extensão da sua personalidade. Trabalhamos com materiais de alta qualidade para entregar peças únicas que acompanham você em todos os momentos.
             </p>
-            <Link href="/sobre">
-              <Button variant="outline" className="rounded-full border-primary/30 text-primary hover:bg-primary/5">
-                Conheça nossa história
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+              <Link href={generalWhatsappUrl} target={whatsappNumber ? "_blank" : undefined} rel="noopener noreferrer">
+                <Button className="w-full sm:w-auto rounded-full px-8 h-12 shadow-md hover:shadow-lg transition-all text-base font-medium">
+                  Falar no WhatsApp
+                </Button>
+              </Link>
+              <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" className="w-full sm:w-auto rounded-full border-primary/30 text-primary hover:bg-primary/5 px-8 h-12 text-base font-medium transition-all">
+                  Ver Instagram
+                </Button>
+              </Link>
+            </div>
           </div>
           <div className="md:w-1/2 relative h-[300px] md:h-[400px] w-full rounded-2xl overflow-hidden">
             <Image 

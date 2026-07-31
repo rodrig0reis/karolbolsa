@@ -35,13 +35,11 @@ export async function Footer() {
             <p className="text-sm text-muted-foreground">
               {settings?.footerText || "Sua loja especializada em bolsas e acessórios femininos com elegância, qualidade e estilo."}
             </p>
-            <div className="flex items-center space-x-4">
-              {settings?.instagramLink && (
-                <Link href={settings.instagramLink} target="_blank" className="text-muted-foreground hover:text-primary">
-                  <InstagramIcon className="h-5 w-5" />
-                  <span className="sr-only">Instagram</span>
-                </Link>
-              )}
+            <div className="flex items-center pt-2">
+              <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors" aria-label="Siga nosso Instagram">
+                <InstagramIcon className="h-5 w-5" />
+                <span className="font-medium text-sm">@karolbolsas_artesanais</span>
+              </Link>
             </div>
           </div>
           
