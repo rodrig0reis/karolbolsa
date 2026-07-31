@@ -60,6 +60,21 @@ rm -rf .next
 npm run build
 ```
 
+## Manutenção e Atualização
+
+Atualização normal:
+```bash
+cd /opt/karolbolsa
+git pull origin main
+./deploy.sh
+sudo systemctl reload nginx
+```
+
+Parada total somente em manutenção:
+```bash
+./scripts/stop.sh
+```
+
 ## Deploy limpo em nova VPS Ubuntu
 
 1. Instale as dependências básicas:

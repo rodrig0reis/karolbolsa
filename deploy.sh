@@ -3,27 +3,21 @@ set -euo pipefail
 
 COMPOSE="docker compose --env-file .env.production -f docker-compose.prod.yml"
 
-echo "Iniciando deploy Karol Bolsas..."
+echo "Iniciando atualização Karol Bolsas..."
 
-echo "Parando containers antigos..."
-$COMPOSE down
-
-echo "Subindo banco..."
+echo "Garantindo banco online..."
 $COMPOSE up -d db
 
-echo "Aguardando banco iniciar..."
-sleep 15
+echo "Rodando migrations, seed e patch..."
+$COMPOSE run --rm migrate sh -c "npx prisma migrate deploy && npx prisma db seed && npm run patch:products"
 
-echo "Rodando migrations e seed..."
-$COMPOSE run --rm migrate sh -c "npx prisma migrate deploy && npx prisma db seed"
+echo "Construindo nova imagem web sem derrubar site atual..."
+$COMPOSE build web
 
-echo "Aplicando patch de produtos..."
-$COMPOSE run --rm migrate sh -c "npm run patch:products"
+echo "Atualizando somente o container web..."
+$COMPOSE up -d --no-deps web
 
-echo "Subindo aplicação web..."
-$COMPOSE up -d --build web
-
-echo "Status dos containers:"
+echo "Status:"
 $COMPOSE ps
 
-echo "Deploy finalizado."
+echo "Atualização concluída."
