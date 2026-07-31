@@ -49,7 +49,7 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+        <div className="grid grid-cols-1 min-[390px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           {produtos.map((produto) => {
             let whatsappUrl = undefined
             if (whatsappNumber && produto.isAvailable) {

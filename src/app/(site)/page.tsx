@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ProductCard } from "@/components/public/product-card"
 import { prisma } from "@/lib/prisma"
+import { getStoreSettings } from "@/lib/settings"
 import { buildProductWhatsAppUrl } from "@/lib/utils"
 
 export const dynamic = "force-dynamic";
@@ -20,21 +21,34 @@ export default async function Home() {
     take: 4,
   })
 
-  const settings = await prisma.storeSettings.findFirst()
+  const settings = await getStoreSettings()
   const whatsappNumber = settings?.whatsappNumber
   const generalWhatsappUrl = whatsappNumber 
-    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Olá, vim pelo site da Karol Bolsas e gostaria de atendimento.")}` 
+    ? `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(settings?.whatsappGeneralMsg || "Olá, vim pelo site da Karol Bolsas e gostaria de atendimento.")}` 
     : "/contato"
+
+  const homeBanners = await prisma.banner.findMany({
+    where: { isActive: true, position: "home" },
+    orderBy: { sortOrder: "asc" }
+  })
+  
+  const mainBanner = homeBanners[0] || {
+    title: settings?.storeName || "Karol Bolsas",
+    subtitle: settings?.slogan || "Bolsas femininas, acessórios e estilo em Pirangi do Norte/RN.",
+    imageUrl: "/products/bolsa-praia-palha-natural-pirangi.jpg",
+    buttonText: "Ver produtos",
+    buttonLink: "/produtos"
+  }
 
   return (
     <div className="flex flex-col gap-16 pb-16">
       
-      {/* Banner Principal */}
+      {/* Banner Principal Dinâmico */}
       <section className="relative h-[60vh] min-h-[500px] w-full bg-muted flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="/products/bolsa-praia-palha-natural-pirangi.jpg" 
-            alt="Karol Bolsas - Moda Feminina em Pirangi" 
+            src={mainBanner.imageUrl} 
+            alt={mainBanner.title} 
             fill
             sizes="100vw"
             className="object-cover object-center opacity-70"
@@ -44,17 +58,21 @@ export default async function Home() {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] z-0" />
         <div className="container relative z-10 mx-auto px-4 text-center">
           <h1 className="font-serif text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-md">
-            Karol Bolsas
+            {mainBanner.title}
           </h1>
-          <p className="text-lg md:text-xl text-white/95 mb-10 max-w-2xl mx-auto font-medium drop-shadow-sm">
-            Bolsas femininas, acessórios e estilo praiano em Pirangi do Norte/RN.
-          </p>
+          {mainBanner.subtitle && (
+            <p className="text-lg md:text-xl text-white/95 mb-10 max-w-2xl mx-auto font-medium drop-shadow-sm">
+              {mainBanner.subtitle}
+            </p>
+          )}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/produtos">
-              <Button size="lg" className="rounded-full px-8 text-base h-12 shadow-md w-full sm:w-auto">
-                Ver produtos
-              </Button>
-            </Link>
+            {mainBanner.buttonText && (
+              <Link href={mainBanner.buttonLink || "/produtos"}>
+                <Button size="lg" className="rounded-full px-8 text-base h-12 shadow-md w-full sm:w-auto">
+                  {mainBanner.buttonText}
+                </Button>
+              </Link>
+            )}
             <Link href={generalWhatsappUrl} target={whatsappNumber ? "_blank" : undefined}>
               <Button size="lg" variant="outline" className="rounded-full px-8 text-base h-12 bg-white/10 text-white border-white/30 hover:bg-white/20 w-full sm:w-auto backdrop-blur-sm">
                 Falar no WhatsApp
@@ -111,7 +129,7 @@ export default async function Home() {
           </Link>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+        <div className="grid grid-cols-1 min-[390px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
           {produtos.map((produto) => (
             <ProductCard 
               key={produto.id}
@@ -168,11 +186,13 @@ export default async function Home() {
                   Falar no WhatsApp
                 </Button>
               </Link>
-              <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" rel="noopener noreferrer">
-                <Button variant="outline" className="w-full sm:w-auto rounded-full border-primary/30 text-primary hover:bg-primary/5 px-8 h-12 text-base font-medium transition-all">
-                  Ver Instagram
-                </Button>
-              </Link>
+              {settings?.instagramLink && (
+                <Link href={settings.instagramLink} target="_blank" rel="noopener noreferrer">
+                  <Button variant="outline" className="w-full sm:w-auto rounded-full border-primary/30 text-primary hover:bg-primary/5 px-8 h-12 text-base font-medium transition-all">
+                    Ver Instagram
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
           <div className="md:w-1/2 relative h-[300px] md:h-[400px] w-full rounded-2xl overflow-hidden">

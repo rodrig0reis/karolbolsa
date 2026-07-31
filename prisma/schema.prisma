@@ -77,6 +77,8 @@ model Banner {
   imageUrl    String
   buttonLink  String?
   buttonText  String?
+  position    String   @default("home")
+  sortOrder   Int      @default(0)
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -85,11 +87,42 @@ model Banner {
 model StoreSettings {
   id             String   @id @default(uuid())
   storeName      String   @default("Karol Bolsas")
-  whatsappNumber String?
-  whatsappMsg    String?  @default("Olá, vi este produto no site da Karol Bolsas e tenho interesse: [NOME DO PRODUTO] - Valor: R$ [VALOR]. Pode me passar mais informações?")
-  instagramLink  String?  @default("https://www.instagram.com/karolbolsas_artesanais/")
-  footerText     String?
-  workingHours   String?
+  slogan         String?
+  shortDesc      String?
+  aboutText      String?
+  
   email          String?
+  phone          String?
+  whatsappNumber String?
+  city           String?
+  state          String?
+  workingHours   String?
+  
+  instagramLink  String?  @default("https://www.instagram.com/karolbolsas_artesanais/")
+  facebookLink   String?
+  tiktokLink     String?
+  pinterestLink  String?
+  linktreeLink   String?
+  
+  primaryColor   String?
+  secondaryColor String?
+  
+  logoUrl        String?
+  footerLogoUrl  String?
+  faviconUrl     String?
+  ogImageUrl     String?
+  
+  floatWhatsapp  Boolean  @default(true)
+  whatsappMsg    String?  @default("Olá, vi este produto no site da Karol Bolsas e tenho interesse: {produto} - Valor: {preco}. Pode me passar mais informações?")
+  whatsappGeneralMsg String? @default("Olá, vim pelo site da Karol Bolsas e gostaria de atendimento.")
+  
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  allowIndexing  Boolean  @default(true)
+  
+  footerText     String?
+  
+  createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

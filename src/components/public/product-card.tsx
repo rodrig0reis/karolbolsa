@@ -88,8 +88,9 @@ export function ProductCard({
           <>
             {whatsappUrl && (
               <Link href={whatsappUrl} target="_blank" className="w-full" onClick={(e) => e.stopPropagation()}>
-                <Button className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-base font-medium shadow-sm transition-all hover:scale-[1.02]" aria-label="Comprar pelo WhatsApp">
-                  Comprar pelo WhatsApp
+                <Button className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-sm sm:text-base font-medium shadow-sm transition-all hover:scale-[1.02] flex items-center justify-center overflow-hidden px-2 whitespace-nowrap min-w-0" aria-label="Comprar pelo WhatsApp">
+                  <span className="sm:hidden">Comprar</span>
+                  <span className="hidden sm:inline">Comprar pelo WhatsApp</span>
                 </Button>
               </Link>
             )}

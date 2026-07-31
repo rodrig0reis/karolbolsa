@@ -112,7 +112,10 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <div className="container mx-auto px-4 md:px-6 py-8 md:py-12 pb-28 md:pb-12">
+      <div 
+        className="container mx-auto px-4 md:px-6 py-8 md:py-12"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 112px)' }}
+      >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
@@ -239,12 +242,13 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
           <div className="flex-1">
             {whatsappNumber && product.isAvailable && product.stock > 0 ? (
               <Link href={whatsappUrl} target="_blank" className="w-full">
-                <Button className="w-full h-12 rounded-full shadow-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium" aria-label="Comprar pelo WhatsApp">
-                  Comprar pelo WhatsApp
+                <Button className="w-full h-14 rounded-full flex items-center justify-center text-center whitespace-nowrap px-2 min-[390px]:px-4 text-sm font-medium shadow-md bg-emerald-600 hover:bg-emerald-700 text-white min-w-0" aria-label="Comprar pelo WhatsApp">
+                  <span className="sm:hidden">WhatsApp</span>
+                  <span className="hidden sm:inline">Comprar pelo WhatsApp</span>
                 </Button>
               </Link>
             ) : (
-              <Button disabled className="w-full h-12 rounded-full bg-zinc-200 text-zinc-500 font-medium cursor-not-allowed">
+              <Button disabled className="w-full h-14 rounded-full flex items-center justify-center text-center px-4 text-sm bg-zinc-200 text-zinc-500 font-medium cursor-not-allowed">
                 Esgotado
               </Button>
             )}

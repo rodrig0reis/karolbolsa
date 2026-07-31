@@ -21,7 +21,7 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 )
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from '@/components/ui/sheet'
-import { prisma } from '@/lib/prisma'
+import { getStoreSettings } from '@/lib/settings'
 
 const navLinks = [
   { name: 'Início', href: '/' },
@@ -34,8 +34,9 @@ const navLinks = [
 ]
 
 export async function Header() {
-  const settings = await prisma.storeSettings.findFirst()
+  const settings = await getStoreSettings()
   const storeName = settings?.storeName || "Karol Bolsas"
+  const instagramUrl = settings?.instagramLink || "https://www.instagram.com/karolbolsas_artesanais/"
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -65,15 +66,17 @@ export async function Header() {
                   </Link>
                 ))}
                 <div className="h-px w-full bg-border my-2" />
-                <Link
-                  href="https://www.instagram.com/karolbolsas_artesanais/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-lg font-medium text-foreground/70 transition-colors hover:text-primary"
-                >
-                  <InstagramIcon className="h-5 w-5" />
-                  Instagram Oficial
-                </Link>
+                {instagramUrl && (
+                  <Link
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-lg font-medium text-foreground/70 transition-colors hover:text-primary"
+                  >
+                    <InstagramIcon className="h-5 w-5" />
+                    Instagram Oficial
+                  </Link>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
@@ -103,11 +106,13 @@ export async function Header() {
 
         {/* Actions */}
         <div className="flex items-center gap-2 flex-1 justify-end">
-          <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" rel="noopener noreferrer" title="Instagram Oficial">
-            <Button variant="ghost" size="icon" className="hidden sm:inline-flex text-muted-foreground hover:text-primary" aria-label="Acessar Instagram">
-              <InstagramIcon className="h-5 w-5" />
-            </Button>
-          </Link>
+          {instagramUrl && (
+            <Link href={instagramUrl} target="_blank" rel="noopener noreferrer" title="Instagram Oficial">
+              <Button variant="ghost" size="icon" className="hidden sm:inline-flex text-muted-foreground hover:text-primary" aria-label="Acessar Instagram">
+                <InstagramIcon className="h-5 w-5" />
+              </Button>
+            </Link>
+          )}
           
           <form action="/produtos" className="relative flex items-center">
             <input 

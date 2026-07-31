@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { formatPhoneBR } from "@/lib/utils"
 import { MapPin, Phone, Mail } from "lucide-react"
-import { prisma } from "@/lib/prisma"
+import { getStoreSettings } from "@/lib/settings"
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg
@@ -23,8 +23,9 @@ const InstagramIcon = ({ className }: { className?: string }) => (
 )
 
 export async function Footer() {
-  const settings = await prisma.storeSettings.findFirst()
+  const settings = await getStoreSettings()
   const storeName = settings?.storeName || "Karol Bolsas"
+  const instagramUrl = settings?.instagramLink || "https://www.instagram.com/karolbolsas_artesanais/"
   
   return (
     <footer className="bg-secondary/30 border-t mt-12">
@@ -35,12 +36,14 @@ export async function Footer() {
             <p className="text-sm text-muted-foreground">
               {settings?.footerText || "Sua loja especializada em bolsas e acessórios femininos com elegância, qualidade e estilo."}
             </p>
-            <div className="flex items-center pt-2">
-              <Link href="https://www.instagram.com/karolbolsas_artesanais/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors" aria-label="Siga nosso Instagram">
-                <InstagramIcon className="h-5 w-5" />
-                <span className="font-medium text-sm">@karolbolsas_artesanais</span>
-              </Link>
-            </div>
+            {instagramUrl && (
+              <div className="flex items-center pt-2">
+                <Link href={instagramUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors" aria-label="Siga nosso Instagram">
+                  <InstagramIcon className="h-5 w-5" />
+                  <span className="font-medium text-sm">Siga no Instagram</span>
+                </Link>
+              </div>
+            )}
           </div>
           
           <div className="space-y-4">

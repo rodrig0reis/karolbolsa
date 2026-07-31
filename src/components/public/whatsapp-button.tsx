@@ -1,27 +1,26 @@
-import { prisma } from "@/lib/prisma"
+import { getStoreSettings } from "@/lib/settings"
 import Link from "next/link"
 import { Phone } from "lucide-react"
-import { buildGeneralWhatsAppUrl } from "@/lib/utils"
 
 export async function WhatsappButton() {
-  const settings = await prisma.storeSettings.findFirst()
+  const settings = await getStoreSettings()
   
-  if (!settings?.whatsappNumber) return null
+  if (!settings?.whatsappNumber || !settings.floatWhatsapp) return null
 
   // Ensure it only contains numbers
   const whatsappNumber = settings.whatsappNumber.replace(/\D/g, "")
-  // The general text should be: "Olá, vim pelo site da Karol Bolsas e gostaria de atendimento."
-  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent("Olá, vim pelo site da Karol Bolsas e gostaria de atendimento.")}`
+  const message = settings.whatsappGeneralMsg || "Olá, vim pelo site da Karol Bolsas e gostaria de atendimento."
+  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`
 
   return (
     <div 
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-end" 
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      className="fixed right-4 z-40 flex flex-col items-end md:bottom-6 md:right-6 md:z-50" 
+      style={{ bottom: 'calc(env(safe-area-inset-bottom) + 96px)' }}
     >
       <Link 
         href={url}
         target="_blank"
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/30 hover:scale-110 hover:bg-[#20bd5a] transition-all duration-300"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/30 hover:scale-110 hover:bg-[#20bd5a] transition-all duration-300 md:h-14 md:w-14"
         title="Fale conosco no WhatsApp"
         aria-label="Atendimento via WhatsApp"
       >
