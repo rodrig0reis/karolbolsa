@@ -21,7 +21,11 @@ async function main() {
 
   const result = await prisma.user.updateMany({
     where: { email },
-    data: { passwordHash },
+    data: { 
+      passwordHash,
+      role: "ADMIN",
+      isActive: true
+    },
   });
 
   console.log("Admin atualizado:", email);
