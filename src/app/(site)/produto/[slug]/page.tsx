@@ -243,7 +243,7 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
             {whatsappNumber && product.isAvailable && product.stock > 0 ? (
               <Link href={whatsappUrl} target="_blank" className="w-full">
                 <Button className="w-full h-14 rounded-full flex items-center justify-center text-center whitespace-nowrap px-2 min-[390px]:px-4 text-sm font-medium shadow-md bg-emerald-600 hover:bg-emerald-700 text-white min-w-0" aria-label="Comprar pelo WhatsApp">
-                  <span className="sm:hidden">WhatsApp</span>
+                  <span className="sm:hidden">Comprar</span>
                   <span className="hidden sm:inline">Comprar pelo WhatsApp</span>
                 </Button>
               </Link>

@@ -50,17 +50,17 @@ export async function Header() {
               <span className="sr-only">Toggle Menu</span>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <SheetHeader>
+              <SheetHeader className="mb-2">
                 <SheetTitle className="text-left font-serif text-2xl font-bold tracking-tight text-primary">
                   {storeName}
                 </SheetTitle>
               </SheetHeader>
-              <nav className="flex flex-col gap-4 mt-8">
+              <nav className="flex flex-col gap-1 mt-4">
                 {navLinks.map((link) => (
                   <Link
                     key={link.name}
                     href={link.href}
-                    className="text-lg font-medium text-foreground/70 transition-colors hover:text-primary"
+                    className="block rounded-lg px-3 py-3 text-lg font-medium text-foreground/70 transition-colors hover:text-primary hover:bg-muted"
                   >
                     {link.name}
                   </Link>
@@ -71,9 +71,9 @@ export async function Header() {
                     href={instagramUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-lg font-medium text-foreground/70 transition-colors hover:text-primary"
+                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-lg font-medium text-foreground/70 transition-colors hover:text-primary hover:bg-muted"
                   >
-                    <InstagramIcon className="h-5 w-5" />
+                    <InstagramIcon className="h-6 w-6" />
                     Instagram Oficial
                   </Link>
                 )}

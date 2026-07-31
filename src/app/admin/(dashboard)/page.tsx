@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { StatCard } from "@/components/admin/stat-card"
 import { QuickActionCard } from "@/components/admin/quick-action-card"
-import { Package, Tags, Store, PlusCircle, Settings, Image as ImageIcon, Star, Percent, AlertCircle } from "lucide-react"
+import { Package, Tags, Store, PlusCircle, Settings, Image as ImageIcon, Star, Percent, AlertCircle, Activity, TrendingUp, Calendar, Eye } from "lucide-react"
 import Link from "next/link"
 import { StatusBadge } from "@/components/admin/status-badge"
 
@@ -33,6 +33,30 @@ export default async function AdminDashboard() {
       include: { category: true }
     })
   ])
+
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+
+  const [
+    visitsToday,
+    visits7Days,
+    visits30Days,
+    topPathsData
+  ] = await Promise.all([
+    prisma.pageView.count({ where: { createdAt: { gte: todayStart } } }),
+    prisma.pageView.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
+    prisma.pageView.count({ where: { createdAt: { gte: thirtyDaysAgo } } }),
+    prisma.pageView.groupBy({
+      by: ['path'],
+      _count: { path: true },
+      orderBy: { _count: { path: 'desc' } },
+      take: 5
+    })
+  ])
+
+
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -132,6 +156,50 @@ export default async function AdminDashboard() {
             description="Ocultos do site"
           />
         </div>
+      </section>
+
+      <section>
+        <h2 className="text-lg font-semibold mb-4">Acessos da Loja (Real)</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <StatCard
+            title="Acessos Hoje"
+            value={visitsToday}
+            icon={Activity}
+            description="Desde 00:00"
+            className="bg-emerald-50/50 dark:bg-emerald-900/10 border-emerald-200 dark:border-emerald-900"
+          />
+          <StatCard
+            title="Últimos 7 Dias"
+            value={visits7Days}
+            icon={TrendingUp}
+            description="Visitas na semana"
+          />
+          <StatCard
+            title="Últimos 30 Dias"
+            value={visits30Days}
+            icon={Calendar}
+            description="Visitas no mês"
+          />
+        </div>
+        
+        {topPathsData.length > 0 && (
+          <div className="mt-4 bg-card rounded-xl border overflow-hidden">
+            <div className="p-4 sm:p-6 border-b">
+              <h3 className="text-base font-semibold">Páginas Mais Acessadas</h3>
+            </div>
+            <div className="divide-y text-sm">
+              {topPathsData.map(p => (
+                <div key={p.path} className="flex items-center justify-between p-4 sm:px-6 hover:bg-muted/50">
+                  <span className="font-medium text-foreground truncate max-w-[70%]">{p.path}</span>
+                  <span className="flex items-center gap-2 text-muted-foreground bg-muted px-2 py-1 rounded-md">
+                    <Eye className="w-4 h-4" />
+                    {p._count.path}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       <section className="bg-card rounded-xl border overflow-hidden">

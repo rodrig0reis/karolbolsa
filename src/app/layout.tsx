@@ -57,6 +57,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+import { PageViewTracker } from "@/components/public/page-view-tracker";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -68,6 +70,7 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full font-sans">
+        <PageViewTracker />
         {children}
       </body>
     </html>
