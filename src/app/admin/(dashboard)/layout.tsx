@@ -14,8 +14,8 @@ export default async function AdminLayout({
 }) {
   const session = await getAdminSession()
 
-  if (!session || session.role !== "ADMIN") {
-    redirect("/admin/login")
+  if (!session || String(session.role).toUpperCase() !== "ADMIN") {
+    redirect("/admin/login?from=/admin")
   }
 
   return (
