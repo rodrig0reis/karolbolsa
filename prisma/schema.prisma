@@ -21,11 +21,19 @@ model Category {
   id          String    @id @default(uuid())
   name        String
   slug        String    @unique
-  description String?
-  isActive    Boolean   @default(true)
-  order       Int       @default(0)
-  products    Product[]
-  createdAt   DateTime  @default(now())
+  description    String?
+  isActive       Boolean   @default(true)
+  order          Int       @default(0)
+  sortOrder      Int       @default(0)
+  parentId       String?
+  parent         Category? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children       Category[] @relation("CategoryHierarchy")
+  showInMainMenu Boolean   @default(false)
+  showOnHome     Boolean   @default(true)
+  menuLabel      String?
+  imageUrl       String?
+  products       Product[]
+  createdAt      DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 

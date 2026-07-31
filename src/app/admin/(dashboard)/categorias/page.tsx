@@ -12,12 +12,26 @@ import { ToggleCategoryButton } from "./toggle-button"
 
 export default async function CategoriasPage() {
   const categorias = await prisma.category.findMany({
-    orderBy: { order: "asc" },
+    orderBy: [
+      { sortOrder: "asc" },
+      { name: "asc" }
+    ],
     include: {
+      parent: true,
       _count: {
         select: { products: true }
       }
     }
+  })
+
+  // Organizar hierarquicamente para a view (Pai -> Filhos)
+  const mainCategories = categorias.filter(c => !c.parentId)
+  const orderedCategorias: typeof categorias = []
+
+  mainCategories.forEach(main => {
+    orderedCategorias.push(main)
+    const children = categorias.filter(c => c.parentId === main.id)
+    orderedCategorias.push(...children)
   })
 
   return (
@@ -46,7 +60,7 @@ export default async function CategoriasPage() {
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Slug</TableHead>
-                <TableHead>Ordem</TableHead>
+                <TableHead>Exibição</TableHead>
                 <TableHead>Produtos</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Data</TableHead>
@@ -61,11 +75,30 @@ export default async function CategoriasPage() {
                   </TableCell>
                 </TableRow>
               ) : (
-                categorias.map((categoria) => (
-                  <TableRow key={categoria.id}>
-                    <TableCell className="font-medium">{categoria.name}</TableCell>
-                    <TableCell>{categoria.slug}</TableCell>
-                    <TableCell>{categoria.order}</TableCell>
+                orderedCategorias.map((categoria) => (
+                  <TableRow key={categoria.id} className={categoria.parentId ? "bg-muted/20" : ""}>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        {categoria.parentId && (
+                          <span className="text-muted-foreground ml-2">└</span>
+                        )}
+                        <span className={categoria.parentId ? "text-muted-foreground ml-2" : ""}>
+                          {categoria.name}
+                        </span>
+                        {!categoria.parentId ? (
+                          <Badge variant="outline" className="ml-2 bg-primary/10 text-primary border-primary/20 text-[10px]">Principal</Badge>
+                        ) : (
+                          <Badge variant="outline" className="ml-2 text-[10px]">Sub</Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground text-sm">{categoria.slug}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1 flex-wrap">
+                        {categoria.showInMainMenu && <Badge variant="secondary" className="text-[10px]">Menu</Badge>}
+                        {categoria.showOnHome && <Badge variant="secondary" className="text-[10px]">Home</Badge>}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <Badge variant="secondary">{categoria._count.products}</Badge>
                     </TableCell>

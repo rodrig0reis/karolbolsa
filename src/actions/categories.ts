@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { auth } from "../../auth"
+import { getAdminSession } from "@/lib/admin-session"
 
 // Utilitário para gerar slug
 function generateSlug(text: string) {
@@ -18,15 +18,21 @@ function generateSlug(text: string) {
 }
 
 export async function createCategory(prevState: unknown, formData: FormData) {
-  const session = await auth()
+  const session = await getAdminSession()
   if (!session) return { error: "Não autorizado" }
 
   const name = formData.get("name") as string
   let slug = formData.get("slug") as string
   const description = formData.get("description") as string
+  const imageUrl = formData.get("imageUrl") as string
+  const menuLabel = formData.get("menuLabel") as string
   const isActive = formData.get("isActive") === "on"
-  const orderStr = formData.get("order") as string
+  const showInMainMenu = formData.get("showInMainMenu") === "on"
+  const showOnHome = formData.get("showOnHome") === "on"
+  const orderStr = formData.get("sortOrder") as string || formData.get("order") as string
   const order = orderStr ? parseInt(orderStr, 10) : 0
+  let parentId = formData.get("parentId") as string | null
+  if (parentId === "none" || !parentId) parentId = null
   
   if (!name) return { error: "O nome da categoria é obrigatório." }
   if (order < 0) return { error: "A ordem não pode ser negativa." }
@@ -48,8 +54,14 @@ export async function createCategory(prevState: unknown, formData: FormData) {
         name,
         slug,
         description,
+        imageUrl,
+        menuLabel,
         isActive,
-        order
+        showInMainMenu,
+        showOnHome,
+        order,
+        sortOrder: order,
+        parentId
       }
     })
 
@@ -64,7 +76,7 @@ export async function createCategory(prevState: unknown, formData: FormData) {
 }
 
 export async function updateCategory(prevState: unknown, formData: FormData) {
-  const session = await auth()
+  const session = await getAdminSession()
   if (!session) return { error: "Não autorizado" }
 
   const id = formData.get("id") as string
@@ -73,9 +85,15 @@ export async function updateCategory(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string
   let slug = formData.get("slug") as string
   const description = formData.get("description") as string
+  const imageUrl = formData.get("imageUrl") as string
+  const menuLabel = formData.get("menuLabel") as string
   const isActive = formData.get("isActive") === "on"
-  const orderStr = formData.get("order") as string
+  const showInMainMenu = formData.get("showInMainMenu") === "on"
+  const showOnHome = formData.get("showOnHome") === "on"
+  const orderStr = formData.get("sortOrder") as string || formData.get("order") as string
   const order = orderStr ? parseInt(orderStr, 10) : 0
+  let parentId = formData.get("parentId") as string | null
+  if (parentId === "none" || !parentId) parentId = null
   
   if (!name) return { error: "O nome da categoria é obrigatório." }
   if (order < 0) return { error: "A ordem não pode ser negativa." }
@@ -101,8 +119,14 @@ export async function updateCategory(prevState: unknown, formData: FormData) {
         name,
         slug,
         description,
+        imageUrl,
+        menuLabel,
         isActive,
-        order
+        showInMainMenu,
+        showOnHome,
+        order,
+        sortOrder: order,
+        parentId
       }
     })
 
@@ -117,7 +141,7 @@ export async function updateCategory(prevState: unknown, formData: FormData) {
 }
 
 export async function toggleCategoryActive(id: string) {
-  const session = await auth()
+  const session = await getAdminSession()
   if (!session) return { error: "Não autorizado" }
 
   try {
@@ -140,7 +164,7 @@ export async function toggleCategoryActive(id: string) {
 }
 
 export async function deleteCategory(id: string) {
-  const session = await auth()
+  const session = await getAdminSession()
   if (!session) return { error: "Não autorizado" }
 
   try {

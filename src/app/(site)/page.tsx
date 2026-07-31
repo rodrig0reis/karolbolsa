@@ -11,8 +11,8 @@ export const revalidate = 0;
 
 export default async function Home() {
   const categorias = await prisma.category.findMany({
-    where: { isActive: true },
-    orderBy: { order: "asc" },
+    where: { isActive: true, showOnHome: true },
+    orderBy: { sortOrder: "asc" },
   })
 
   const produtos = await prisma.product.findMany({
@@ -108,7 +108,7 @@ export default async function Home() {
 
       {/* Categorias */}
       <section className="container mx-auto px-0 md:px-4">
-        <h2 className="font-serif text-3xl font-bold text-center mb-10 px-4">Compre por Categoria</h2>
+        <h2 className="font-serif text-3xl font-bold text-center mb-10 px-4">Escolha seu estilo</h2>
         <div className="flex gap-3 overflow-x-auto whitespace-nowrap px-4 pb-4 md:flex-wrap md:justify-center scrollbar-hide">
           {categorias.map((cat) => (
             <Link key={cat.slug} href={`/categoria/${cat.slug}`}>

@@ -16,12 +16,19 @@ export type CategoryFormProps = {
     name: string
     slug: string
     description?: string | null
+    imageUrl?: string | null
+    menuLabel?: string | null
     isActive: boolean
+    showInMainMenu: boolean
+    showOnHome: boolean
     order: number
+    sortOrder: number
+    parentId?: string | null
   }
+  parentCategories?: { id: string, name: string }[]
 }
 
-export function CategoryForm({ initialData }: CategoryFormProps) {
+export function CategoryForm({ initialData, parentCategories = [] }: CategoryFormProps) {
   const router = useRouter()
   const isEdit = !!initialData
   const actionToUse = isEdit ? updateCategory : createCategory
@@ -72,14 +79,49 @@ export function CategoryForm({ initialData }: CategoryFormProps) {
               <Input id="description" name="description" defaultValue={initialData?.description || ""} placeholder="Breve descrição da categoria..." />
             </div>
 
-            <div className="flex items-center gap-2 pt-2">
-              <input type="checkbox" id="isActive" name="isActive" defaultChecked={initialData?.isActive ?? true} className="w-4 h-4 rounded border-gray-300" />
-              <Label htmlFor="isActive" className="cursor-pointer">Categoria Ativa</Label>
+            <div className="space-y-2">
+              <Label htmlFor="parentId">Categoria Pai</Label>
+              <select 
+                id="parentId" 
+                name="parentId" 
+                defaultValue={initialData?.parentId || "none"}
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="none">Nenhuma (Categoria Principal)</option>
+                {parentCategories.map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="order">Ordem de Exibição</Label>
-              <Input id="order" name="order" type="number" defaultValue={initialData?.order ?? 0} min="0" required />
+              <Label htmlFor="imageUrl">URL da Imagem (Opcional)</Label>
+              <Input id="imageUrl" name="imageUrl" defaultValue={initialData?.imageUrl || ""} placeholder="https://..." />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="menuLabel">Label no Menu (Opcional)</Label>
+              <Input id="menuLabel" name="menuLabel" defaultValue={initialData?.menuLabel || ""} placeholder="Ex: NOVO" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="isActive" name="isActive" defaultChecked={initialData?.isActive ?? true} className="w-4 h-4 rounded border-gray-300" />
+                <Label htmlFor="isActive" className="cursor-pointer">Categoria Ativa</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="showInMainMenu" name="showInMainMenu" defaultChecked={initialData?.showInMainMenu ?? false} className="w-4 h-4 rounded border-gray-300" />
+                <Label htmlFor="showInMainMenu" className="cursor-pointer">Mostrar no Menu Superior</Label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input type="checkbox" id="showOnHome" name="showOnHome" defaultChecked={initialData?.showOnHome ?? true} className="w-4 h-4 rounded border-gray-300" />
+                <Label htmlFor="showOnHome" className="cursor-pointer">Mostrar na Home</Label>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <Label htmlFor="sortOrder">Ordem de Exibição (0 é o primeiro)</Label>
+              <Input id="sortOrder" name="sortOrder" type="number" defaultValue={initialData?.sortOrder ?? (initialData?.order ?? 0)} min="0" required />
             </div>
 
             {state?.error && (

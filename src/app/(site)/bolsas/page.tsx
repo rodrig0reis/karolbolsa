@@ -11,16 +11,35 @@ export const metadata = {
   description: "Confira nossa coleção completa de bolsas femininas."
 }
 
-export default async function BolsasPage() {
+export default async function BolsasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const resolvedParams = await searchParams
+  const subFilter = typeof resolvedParams.sub === "string" ? resolvedParams.sub : null
+
+  // Buscar categoria principal e subcategorias
+  const mainCat = await prisma.category.findUnique({ where: { slug: "bolsas" } })
+  const subcategories = mainCat 
+    ? await prisma.category.findMany({ where: { parentId: mainCat.id, isActive: true }, orderBy: { sortOrder: "asc" } }) 
+    : []
+
+  const validCategoryIds = mainCat ? [mainCat.id, ...subcategories.map(c => c.id)] : []
+
+  let categoryFilter: any = { in: validCategoryIds }
+  if (subFilter) {
+    const sub = subcategories.find(c => c.slug === subFilter)
+    if (sub) {
+      categoryFilter = sub.id
+    }
+  }
+
   const [produtos, settings] = await Promise.all([
     prisma.product.findMany({
       where: { 
         isActive: true,
-        category: {
-          slug: {
-            in: ["bolsas", "bolsas-de-mao", "bolsas-transversais", "bolsas-artesanais", "bolsas-de-praia"]
-          }
-        }
+        categoryId: validCategoryIds.length > 0 ? categoryFilter : undefined
       },
       include: { category: true },
       orderBy: [
@@ -44,6 +63,23 @@ export default async function BolsasPage() {
           Nossa coleção completa de bolsas femininas. Modelos transversais, de mão, de praia e artesanais para todos os momentos.
         </p>
       </div>
+
+      {subcategories.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto whitespace-nowrap px-4 pb-8 md:flex-wrap md:justify-center scrollbar-hide">
+          <Link href="/bolsas">
+            <div className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${!subFilter ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted text-foreground'}`}>
+              Todas
+            </div>
+          </Link>
+          {subcategories.map(sub => (
+            <Link key={sub.id} href={`/bolsas?sub=${sub.slug}`}>
+              <div className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${subFilter === sub.slug ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted text-foreground'}`}>
+                {sub.name}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {produtos.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground flex flex-col items-center gap-4">

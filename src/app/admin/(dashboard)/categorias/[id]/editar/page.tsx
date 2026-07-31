@@ -18,5 +18,11 @@ export default async function EditarCategoriaPage({
     notFound()
   }
 
-  return <CategoryForm initialData={categoria} />
+  const categories = await prisma.category.findMany({
+    where: { parentId: null, id: { not: id } },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true }
+  })
+
+  return <CategoryForm initialData={categoria} parentCategories={categories} />
 }

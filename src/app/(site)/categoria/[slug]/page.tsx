@@ -7,16 +7,24 @@ import { buildProductWhatsAppUrl } from "@/lib/utils"
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default async function CategoriaPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CategoriaPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const resolvedParams = await params
+  const resolvedSearch = await searchParams
+  const subFilter = typeof resolvedSearch.sub === "string" ? resolvedSearch.sub : null
   
   const [category, settings] = await Promise.all([
     prisma.category.findUnique({
       where: { slug: resolvedParams.slug, isActive: true },
       include: {
-        products: {
+        children: {
           where: { isActive: true },
-          orderBy: { createdAt: 'desc' }
+          orderBy: { sortOrder: "asc" }
         }
       }
     }),
@@ -27,7 +35,25 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
     notFound()
   }
 
-  const produtos = category.products
+  const subcategories = category.children || []
+  const validCategoryIds = [category.id, ...subcategories.map(c => c.id)]
+
+  let categoryFilter: any = { in: validCategoryIds }
+  if (subFilter) {
+    const sub = subcategories.find(c => c.slug === subFilter)
+    if (sub) {
+      categoryFilter = sub.id
+    }
+  }
+
+  const produtos = await prisma.product.findMany({
+    where: {
+      isActive: true,
+      categoryId: categoryFilter
+    },
+    include: { category: true },
+    orderBy: { createdAt: 'desc' }
+  })
   const whatsappNumber = settings?.whatsappNumber
 
   return (
@@ -40,6 +66,23 @@ export default async function CategoriaPage({ params }: { params: Promise<{ slug
           </p>
         )}
       </div>
+
+      {subcategories.length > 0 && (
+        <div className="flex gap-2 overflow-x-auto whitespace-nowrap px-4 pb-8 md:flex-wrap md:justify-center scrollbar-hide">
+          <Link href={`/categoria/${category.slug}`}>
+            <div className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${!subFilter ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted text-foreground'}`}>
+              Todos
+            </div>
+          </Link>
+          {subcategories.map(sub => (
+            <Link key={sub.id} href={`/categoria/${category.slug}?sub=${sub.slug}`}>
+              <div className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border ${subFilter === sub.slug ? 'bg-primary text-primary-foreground border-primary' : 'bg-background hover:bg-muted text-foreground'}`}>
+                {sub.name}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
 
       {produtos.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground flex flex-col items-center gap-4">

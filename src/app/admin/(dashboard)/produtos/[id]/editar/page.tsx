@@ -20,7 +20,8 @@ export default async function EditarProdutoPage({
 
   const categorias = await prisma.category.findMany({
     where: { isActive: true },
-    orderBy: { name: 'asc' }
+    orderBy: { sortOrder: "asc" },
+    select: { id: true, name: true, parentId: true }
   })
 
   // To allow parsing decimal correctly, serialize before passing to client components.

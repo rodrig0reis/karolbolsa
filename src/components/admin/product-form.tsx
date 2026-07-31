@@ -11,7 +11,7 @@ import { ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 export type ProductFormProps = {
-  categorias: { id: string, name: string }[]
+  categorias: { id: string, name: string, parentId?: string | null }[]
   initialData?: {
     id: string
     name: string
@@ -105,7 +105,23 @@ export function ProductForm({ categorias, initialData }: ProductFormProps) {
                   className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                 >
                   <option value="" disabled>Selecione uma categoria</option>
-                  {categorias.map(cat => (
+                  
+                  {(() => {
+                    const mains = categorias.filter(c => !c.parentId);
+                    const children = categorias.filter(c => c.parentId);
+                    
+                    return mains.map(main => (
+                      <optgroup key={main.id} label={main.name}>
+                        <option value={main.id}>{main.name} (Geral)</option>
+                        {children.filter(c => c.parentId === main.id).map(child => (
+                          <option key={child.id} value={child.id}>{child.name}</option>
+                        ))}
+                      </optgroup>
+                    ));
+                  })()}
+                  
+                  {/* Categorias sem pai que não entraram */}
+                  {categorias.filter(c => !c.parentId && !categorias.some(m => m.id === c.id)).map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                   ))}
                 </select>

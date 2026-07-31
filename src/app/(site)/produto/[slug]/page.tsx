@@ -68,7 +68,9 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
   const product = await prisma.product.findUnique({
     where: { slug: resolvedParams.slug, isActive: true },
     include: {
-      category: true,
+      category: {
+        include: { parent: true }
+      },
       images: { orderBy: { order: 'asc' } }
     }
   })
@@ -120,10 +122,31 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
-      <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors">
-        <ArrowLeft className="h-4 w-4" />
-        Voltar para a loja
-      </Link>
+      <nav aria-label="Breadcrumb" className="mb-8">
+        <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
+          <li>
+            <Link href="/" className="hover:text-primary transition-colors">Início</Link>
+          </li>
+          <li><span className="opacity-50">/</span></li>
+          {product.category.parent && (
+            <>
+              <li>
+                <Link href={`/categoria/${product.category.parent.slug}`} className="hover:text-primary transition-colors">
+                  {product.category.parent.name}
+                </Link>
+              </li>
+              <li><span className="opacity-50">/</span></li>
+            </>
+          )}
+          <li>
+            <Link href={`/categoria/${product.category.slug}`} className="hover:text-primary transition-colors">
+              {product.category.name}
+            </Link>
+          </li>
+          <li><span className="opacity-50">/</span></li>
+          <li className="text-foreground font-medium" aria-current="page">{product.name}</li>
+        </ol>
+      </nav>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
         
