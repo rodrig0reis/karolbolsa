@@ -2,6 +2,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { prisma } from "@/lib/prisma"
 import { Package, Tags, Eye, TrendingUp } from "lucide-react"
 
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+
 export default async function AdminDashboard() {
   const [totalProducts, totalCategories, featuredProducts] = await Promise.all([
     prisma.product.count(),

@@ -24,9 +24,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://karolbolsas.manialivre.com.br"
-  const imageUrl = product.mainImage
+  
+  let imageUrl = product.mainImage
     ? (product.mainImage.startsWith("http") ? product.mainImage : `${siteUrl}${product.mainImage}`)
     : `${siteUrl}/og-karol-bolsas.jpg`
+    
+  // Forçar atualização do cache do WhatsApp
+  if (imageUrl.includes('?')) {
+    imageUrl += '&v=20260731'
+  } else {
+    imageUrl += '?v=20260731'
+  }
   const desc = product.shortDesc || product.fullDesc || "Produto Karol Bolsas"
 
   return {

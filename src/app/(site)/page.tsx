@@ -33,7 +33,7 @@ export default async function Home() {
       <section className="relative h-[60vh] min-h-[500px] w-full bg-muted flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image 
-            src="/banners/banner-karol-bolsas-praia.jpg" 
+            src="/products/bolsa-praia-palha-natural-pirangi.jpg" 
             alt="Karol Bolsas - Moda Feminina em Pirangi" 
             fill
             sizes="100vw"

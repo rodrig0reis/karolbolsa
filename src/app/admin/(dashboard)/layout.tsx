@@ -4,6 +4,9 @@ import Link from "next/link"
 import { LayoutDashboard, Package, Tags, Settings, LogOut, Store } from "lucide-react"
 import { signOutAction } from "@/actions/auth"
 
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+
 export default async function AdminLayout({
   children,
 }: {

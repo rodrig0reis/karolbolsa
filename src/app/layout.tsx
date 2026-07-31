@@ -13,6 +13,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://karolbolsas.manialivre.com.br"),
   title: "Karol Bolsas | Elegância e Estilo",
   description: "Loja especializada em bolsas e acessórios femininos.",
   icons: {
