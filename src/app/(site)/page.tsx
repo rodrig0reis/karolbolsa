@@ -170,7 +170,7 @@ export default async function Home() {
           </div>
           <div className="md:w-1/2 relative h-[300px] md:h-[400px] w-full rounded-2xl overflow-hidden">
             <Image 
-              src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop" 
+              src="/products/bolsa-praia-palha-natural-pirangi.jpg" 
               alt="Sobre a Karol Bolsas"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
