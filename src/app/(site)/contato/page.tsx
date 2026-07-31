@@ -32,7 +32,7 @@ export default async function ContatoPage() {
 
   return (
     <div className="container mx-auto px-4 md:px-6 py-12 md:py-24">
-      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
         <div className="space-y-8">
           <h1 className="font-serif text-4xl font-bold tracking-tight text-primary">
             Entre em Contato
@@ -99,6 +99,28 @@ export default async function ContatoPage() {
               </div>
             </li>
           </ul>
+        </div>
+      </div>
+
+      <div className="max-w-3xl mx-auto border-t pt-16">
+        <h2 className="font-serif text-3xl font-bold text-center mb-8">Perguntas Frequentes (FAQ)</h2>
+        <div className="space-y-6">
+          <div>
+            <h3 className="font-semibold text-lg text-foreground mb-2">Como faço para comprar?</h3>
+            <p className="text-muted-foreground">Você escolhe o produto no site e chama a Karol Bolsas pelo WhatsApp para confirmar disponibilidade, forma de entrega e pagamento.</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg text-foreground mb-2">A loja atende turistas em Pirangi do Norte/RN?</h3>
+            <p className="text-muted-foreground">Sim. A Karol Bolsas fica em Pirangi do Norte/RN e atende clientes locais e turistas pelo WhatsApp.</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg text-foreground mb-2">Posso consultar disponibilidade pelo WhatsApp?</h3>
+            <p className="text-muted-foreground">Sim. Todos os produtos possuem botão para atendimento direto pelo WhatsApp.</p>
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg text-foreground mb-2">Vocês fazem envio?</h3>
+            <p className="text-muted-foreground">Consulte pelo WhatsApp as opções de entrega/envio disponíveis.</p>
+          </div>
         </div>
       </div>
     </div>

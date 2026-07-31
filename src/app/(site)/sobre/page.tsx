@@ -8,10 +8,13 @@ export default function SobrePage() {
         
         <div className="prose prose-stone mx-auto text-lg text-muted-foreground leading-relaxed">
           <p>
-            A Karol Bolsas nasceu para valorizar o estilo, a beleza e a praticidade do dia a dia feminino. Trabalhamos com bolsas e acessórios selecionados com carinho, pensando em mulheres que gostam de peças bonitas, versáteis e cheias de personalidade.
+            A Karol Bolsas é uma loja especializada em bolsas femininas e acessórios, localizada no coração de <strong>Pirangi do Norte/RN</strong>. Nascemos para valorizar o estilo, a beleza e a praticidade, oferecendo peças que acompanham você com leveza e charme.
           </p>
           <p>
-            Nossa proposta é oferecer uma vitrine simples, elegante e fácil de navegar, para que cada cliente encontre o produto ideal e fale diretamente com nosso atendimento pelo WhatsApp.
+            Nossa seleção tem um estilo feminino, casual e praiano, pensado especialmente para turistas que visitam nossa região, clientes locais apaixonadas por moda, e para quem busca o presente ideal. 
+          </p>
+          <p>
+            Trabalhamos com peças versáteis para o uso diário, passeios e dias de sol na praia. Nosso atendimento é humanizado e feito diretamente pelo WhatsApp, garantindo que você tenha a melhor experiência na escolha do seu novo acessório.
           </p>
         </div>
       </div>

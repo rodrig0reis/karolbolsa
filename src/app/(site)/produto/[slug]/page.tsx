@@ -24,20 +24,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://karolbolsas.manialivre.com.br"
-  const imageUrl = product.mainImage.startsWith("http") ? product.mainImage : `${siteUrl}${product.mainImage}`
+  const imageUrl = product.mainImage
+    ? (product.mainImage.startsWith("http") ? product.mainImage : `${siteUrl}${product.mainImage}`)
+    : `${siteUrl}/og-karol-bolsas.jpg`
+  const desc = product.shortDesc || product.fullDesc || "Produto Karol Bolsas"
 
   return {
     title: `${product.name} | Karol Bolsas`,
-    description: product.shortDesc,
+    description: desc,
     openGraph: {
       title: `${product.name} | Karol Bolsas`,
-      description: product.shortDesc,
+      description: desc,
       url: `${siteUrl}/produto/${product.slug}`,
       images: [
         {
           url: imageUrl,
-          width: 800,
-          height: 800,
+          width: 1200,
+          height: 630,
           alt: product.name,
         }
       ],
@@ -46,7 +49,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     twitter: {
       card: "summary_large_image",
       title: `${product.name} | Karol Bolsas`,
-      description: product.shortDesc,
+      description: desc,
       images: [imageUrl],
     }
   }
@@ -75,8 +78,37 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
     ? buildProductWhatsAppUrl(whatsappNumber, product.name, currentPrice)
     : ""
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://karolbolsas.manialivre.com.br"
+  const absoluteProductImageUrl = product.mainImage 
+    ? (product.mainImage.startsWith("http") ? product.mainImage : `${siteUrl}${product.mainImage}`)
+    : `${siteUrl}/og-karol-bolsas.jpg`
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.shortDesc || product.fullDesc || "Produto Karol Bolsas",
+    "image": [absoluteProductImageUrl],
+    "brand": {
+      "@type": "Brand",
+      "name": "Karol Bolsas"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `${siteUrl}/produto/${product.slug}`,
+      "priceCurrency": "BRL",
+      "price": currentPrice,
+      "availability": (product.stock > 0 && product.isAvailable) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+    }
+  }
+
   return (
-    <div className="container mx-auto px-4 md:px-6 py-8 md:py-12">
+    <>
+      <div className="container mx-auto px-4 md:px-6 py-8 md:py-12 pb-28 md:pb-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-8 transition-colors">
         <ArrowLeft className="h-4 w-4" />
         Voltar para a loja
@@ -182,6 +214,35 @@ export default async function ProdutoPage({ params }: { params: Promise<{ slug: 
           )}
         </div>
       </div>
-    </div>
+      </div>
+
+      {/* Barra Fixa Mobile */}
+      <div 
+        className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border/50 p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]"
+        style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)' }}
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col">
+            <span className="text-xs text-muted-foreground font-medium">Preço</span>
+            <span className="text-xl font-bold text-foreground">
+              {formatCurrency(currentPrice)}
+            </span>
+          </div>
+          <div className="flex-1">
+            {whatsappNumber && product.isAvailable && product.stock > 0 ? (
+              <Link href={whatsappUrl} target="_blank" className="w-full">
+                <Button className="w-full h-12 rounded-full shadow-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium" aria-label="Comprar pelo WhatsApp">
+                  Comprar pelo WhatsApp
+                </Button>
+              </Link>
+            ) : (
+              <Button disabled className="w-full h-12 rounded-full bg-zinc-200 text-zinc-500 font-medium cursor-not-allowed">
+                Esgotado
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+    </>
   )
 }

@@ -102,10 +102,18 @@ export async function Header() {
             </Link>
           )}
           
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
-            <Search className="h-5 w-5" />
-            <span className="sr-only">Buscar</span>
-          </Button>
+          <form action="/produtos" className="relative flex items-center">
+            <input 
+              type="search" 
+              name="q" 
+              placeholder="Buscar..." 
+              className="h-9 w-0 sm:w-48 sm:px-4 sm:border sm:border-input sm:rounded-full bg-transparent focus:w-48 focus:px-4 focus:border focus:border-input transition-all duration-300 outline-none placeholder:text-muted-foreground text-sm"
+            />
+            <Button type="submit" variant="ghost" size="icon" className="absolute right-0 text-muted-foreground hover:text-primary rounded-full sm:bg-transparent bg-background">
+              <Search className="h-5 w-5" />
+              <span className="sr-only">Buscar</span>
+            </Button>
+          </form>
         </div>
       </div>
     </header>

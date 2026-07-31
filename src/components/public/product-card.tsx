@@ -3,6 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/utils"
 
@@ -82,18 +83,33 @@ export function ProductCard({
           </div>
         </CardContent>
       </Link>
-      <div className="p-5 pt-0 mt-auto flex flex-col gap-2">
-        <Link href={`/produto/${slug}`} className="w-full">
-          <Badge variant="outline" className="w-full justify-center py-2 hover:bg-muted cursor-pointer rounded-md">
-            Ver detalhes
-          </Badge>
-        </Link>
-        {actuallyAvailable && whatsappUrl && (
-          <Link href={whatsappUrl} target="_blank" className="w-full" onClick={(e) => e.stopPropagation()}>
-            <Badge className="w-full justify-center py-2 bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer rounded-md border-none">
-              Comprar pelo WhatsApp
-            </Badge>
-          </Link>
+      <div className="p-5 pt-0 mt-auto flex flex-col gap-3">
+        {actuallyAvailable ? (
+          <>
+            {whatsappUrl && (
+              <Link href={whatsappUrl} target="_blank" className="w-full" onClick={(e) => e.stopPropagation()}>
+                <Button className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-base font-medium shadow-sm transition-all hover:scale-[1.02]" aria-label="Comprar pelo WhatsApp">
+                  Comprar pelo WhatsApp
+                </Button>
+              </Link>
+            )}
+            <Link href={`/produto/${slug}`} className="w-full">
+              <Button variant="outline" className="w-full h-11 rounded-full text-sm font-medium hover:bg-muted" aria-label={`Ver detalhes de ${name}`}>
+                Ver detalhes
+              </Button>
+            </Link>
+          </>
+        ) : (
+          <>
+            <Button disabled className="w-full h-12 bg-zinc-200 text-zinc-500 rounded-full cursor-not-allowed font-medium text-base">
+              Produto Esgotado
+            </Button>
+            <Link href={`/produto/${slug}`} className="w-full">
+              <Button variant="outline" className="w-full h-11 rounded-full text-sm font-medium hover:bg-muted">
+                Ver detalhes
+              </Button>
+            </Link>
+          </>
         )}
       </div>
     </Card>
