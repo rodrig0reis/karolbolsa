@@ -5,15 +5,15 @@ import { AuthError } from "next-auth"
 import { redirect } from "next/navigation"
 
 export async function signInAction(prevState: unknown, formData: FormData) {
-  const email = formData.get("email") as string
-  const password = formData.get("password") as string
-  const redirectTo = formData.get("redirectTo") as string || "/admin"
+  const email = String(formData.get("email") || "").trim().toLowerCase()
+  const password = String(formData.get("password") || "").trim()
+  const redirectTo = String(formData.get("redirectTo") || "/admin")
 
   try {
     await signIn("credentials", {
       email,
       password,
-      redirect: false,
+      redirectTo,
     })
   } catch (error) {
     if (error instanceof AuthError) {
@@ -26,8 +26,6 @@ export async function signInAction(prevState: unknown, formData: FormData) {
     }
     throw error
   }
-  
-  redirect(redirectTo)
 }
 
 export async function signOutAction() {

@@ -39,7 +39,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role
+          role: String(user.role).toUpperCase()
         }
       }
     })
@@ -47,13 +47,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as unknown as { role: string }).role
+        token.id = user.id
+        token.role = String((user as any).role || "").toUpperCase()
       }
       return token
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as unknown as { role: string }).role = token.role as string
+        ;(session.user as any).id = token.id as string
+        ;(session.user as any).role = String(token.role || "").toUpperCase()
       }
       return session
     }

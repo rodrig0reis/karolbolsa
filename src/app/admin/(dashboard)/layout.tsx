@@ -14,9 +14,10 @@ export default async function AdminLayout({
 }) {
   const session = await auth()
 
-  if (!session) {
-    // Middleware should handle this, but just in case
-    redirect("/admin/login")
+  const role = String((session?.user as any)?.role || "").toUpperCase()
+
+  if (!session?.user || role !== "ADMIN") {
+    redirect("/admin/login?from=/admin")
   }
 
   return (

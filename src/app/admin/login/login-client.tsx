@@ -25,7 +25,7 @@ function LoginForm() {
           </CardDescription>
         </CardHeader>
         <form action={formAction}>
-          <input type="hidden" name="redirectTo" value={from} />
+          <input type="hidden" name="redirectTo" value={from || "/admin"} />
           <CardContent className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
