@@ -75,6 +75,13 @@ Parada total somente em manutenção:
 ./scripts/stop.sh
 ```
 
+Resetar senha do Admin (em caso de perda/erro):
+Caso precise forçar a redefinição da senha do administrador usando as credenciais do seu arquivo `.env.production`:
+```bash
+chmod +x scripts/reset-admin.sh
+./scripts/reset-admin.sh
+```
+
 ## Deploy limpo em nova VPS Ubuntu
 
 1. Instale as dependências básicas:
