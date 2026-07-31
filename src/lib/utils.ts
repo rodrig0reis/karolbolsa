@@ -15,6 +15,8 @@ export function formatCurrency(value: number | string | null | undefined | unkno
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(numValue)
 }
 

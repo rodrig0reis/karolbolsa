@@ -8,13 +8,16 @@ export default function SobrePage() {
         
         <div className="prose prose-stone mx-auto text-lg text-muted-foreground leading-relaxed">
           <p>
-            A Karol Bolsas é uma loja especializada em bolsas femininas e acessórios, localizada no coração de <strong>Pirangi do Norte/RN</strong>. Nascemos para valorizar o estilo, a beleza e a praticidade, oferecendo peças que acompanham você com leveza e charme.
+            Bem-vinda à <strong>Karol Bolsas</strong>, sua vitrine exclusiva de bolsas femininas e acessórios, com raízes no coração de <strong>Pirangi do Norte/RN</strong>. Nascemos da paixão por unir estilo, elegância e a essência única da nossa região costeira.
           </p>
           <p>
-            Nossa seleção tem um estilo feminino, casual e praiano, pensado especialmente para turistas que visitam nossa região, clientes locais apaixonadas por moda, e para quem busca o presente ideal. 
+            Nossa curadoria reflete um <strong>estilo praiano, casual e feminino</strong>. Com peças cuidadosamente selecionadas e valorização do toque artesanal, atendemos desde turistas que buscam a lembrança perfeita de Pirangi até clientes locais que amam moda e exclusividade.
           </p>
           <p>
-            Trabalhamos com peças versáteis para o uso diário, passeios e dias de sol na praia. Nosso atendimento é humanizado e feito diretamente pelo WhatsApp, garantindo que você tenha a melhor experiência na escolha do seu novo acessório.
+            Na Karol Bolsas, você encontra desde bolsas transversais elegantes para a noite, até espaçosas bolsas de palha e praia para aproveitar os dias de sol no litoral potiguar.
+          </p>
+          <p>
+            Para garantir proximidade e conveniência, nosso atendimento é 100% focado no <strong>WhatsApp</strong>. Assim, oferecemos uma consultoria humanizada, rápida e direta, para que você tire todas as suas dúvidas e tenha a melhor experiência possível.
           </p>
         </div>
       </div>
