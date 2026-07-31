@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
+import { Metadata } from "next"
 import { ProductGallery } from "./gallery"
 import { formatCurrency, buildProductWhatsAppUrl } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -9,6 +10,47 @@ import { ArrowLeft } from "lucide-react"
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const resolvedParams = await params
+  const product = await prisma.product.findUnique({
+    where: { slug: resolvedParams.slug, isActive: true },
+  })
+
+  if (!product) {
+    return {
+      title: "Produto não encontrado | Karol Bolsas",
+    }
+  }
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://karolbolsas.manialivre.com.br"
+  const imageUrl = product.mainImage.startsWith("http") ? product.mainImage : `${siteUrl}${product.mainImage}`
+
+  return {
+    title: `${product.name} | Karol Bolsas`,
+    description: product.shortDesc,
+    openGraph: {
+      title: `${product.name} | Karol Bolsas`,
+      description: product.shortDesc,
+      url: `${siteUrl}/produto/${product.slug}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 800,
+          alt: product.name,
+        }
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.name} | Karol Bolsas`,
+      description: product.shortDesc,
+      images: [imageUrl],
+    }
+  }
+}
 
 export default async function ProdutoPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params
