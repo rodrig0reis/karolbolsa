@@ -5,7 +5,7 @@ COMPOSE="docker compose --env-file .env.production -f docker-compose.prod.yml"
 
 echo "Reseting admin password based on .env.production..."
 
-$COMPOSE run --rm migrate sh -lc 'cat > /tmp/reset-admin.ts <<'"'"'TS'"'"'
+$COMPOSE run --rm migrate sh -lc 'cat > /app/reset-admin.ts <<'"'"'TS'"'"'
 import bcrypt from "bcryptjs";
 import { prisma } from "/app/src/lib/prisma";
 
@@ -37,6 +37,6 @@ main().catch(async (error) => {
 });
 TS
 
-npx tsx /tmp/reset-admin.ts'
+npx tsx /app/reset-admin.ts'
 
 echo "Reset completed."
