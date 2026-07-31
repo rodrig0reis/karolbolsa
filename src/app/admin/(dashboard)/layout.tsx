@@ -1,23 +1,21 @@
-import { auth } from "../../../../auth"
+import { getAdminSession } from "@/lib/admin-session"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { LayoutDashboard, Package, Tags, Settings, LogOut, Store } from "lucide-react"
-import { signOutAction } from "@/actions/auth"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await auth()
+  const session = await getAdminSession()
 
-  const role = String((session?.user as any)?.role || "").toUpperCase()
-
-  if (!session?.user || role !== "ADMIN") {
-    redirect("/admin/login?from=/admin")
+  if (!session || session.role !== "ADMIN") {
+    redirect("/admin/login")
   }
 
   return (
@@ -53,14 +51,14 @@ export default async function AdminLayout({
         <div className="p-4 border-t">
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-              {session.user?.name?.charAt(0) || "A"}
+              {session.email.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-medium truncate">{session.user?.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{session.user?.email}</p>
+              <p className="text-sm font-medium truncate">Admin</p>
+              <p className="text-xs text-muted-foreground truncate">{session.email}</p>
             </div>
           </div>
-          <form action={signOutAction}>
+          <form method="post" action="/api/admin/logout">
             <button type="submit" className="flex w-full items-center gap-3 px-3 py-2 rounded-md hover:bg-destructive/10 text-destructive transition-colors">
               <LogOut className="h-5 w-5" />
               Sair
