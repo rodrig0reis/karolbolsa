@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { SettingsSection } from "@/components/admin/settings-section"
 import { Save, Loader2, Store, Phone, Share2, Paintbrush, Globe, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { PasswordChangeModal } from "./password-modal"
 
 export function SettingsClient({ initialSettings }: { initialSettings: any }) {
   const [isSaving, setIsSaving] = useState(false)
@@ -230,8 +231,16 @@ export function SettingsClient({ initialSettings }: { initialSettings: any }) {
 
         <TabsContent value="seguranca" className="space-y-6">
           <SettingsSection title="Credenciais do Administrador" description="Essas opções estão disponíveis na área de gerenciamento global. A edição de perfil completo será ativada em breve.">
-             <div className="p-4 bg-amber-50 text-amber-800 border-amber-200 border rounded-lg text-sm">
-                Aviso: A funcionalidade de alteração de senha segura está em construção na próxima etapa da Fase 3.
+             <div className="bg-card border rounded-lg p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="font-semibold text-foreground">Alteração de Senha</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Atualize a senha utilizada para acessar este painel administrativo. Recomenda-se uma senha forte.
+                  </p>
+                </div>
+                <div>
+                  <PasswordChangeModal />
+                </div>
              </div>
           </SettingsSection>
         </TabsContent>
